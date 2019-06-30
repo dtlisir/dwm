@@ -8,4 +8,4 @@ def home(request):
     """
     首页
     """
-    return render(request, 'home_application/home.html')
+    return render(request, 'home/index.html')

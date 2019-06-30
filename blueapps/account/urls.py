@@ -6,6 +6,5 @@ from blueapps.account import views
 app_name = 'account'
 
 urlpatterns = [
-    url(r'^login_success/$', views.login_success, name="login_success"),
-    url(r'^login_page/$', views.login_page, name="login_page")
+    url(r'^login_out/$', views.login_out, name="login_out"),
 ]

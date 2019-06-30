@@ -1,25 +1,18 @@
 # -*- coding: utf-8 -*-
-from django.shortcuts import render
-
+from urllib.parse import urlencode
+from django.conf import settings
+from django.shortcuts import  redirect
+from django.contrib.auth import logout
+from django.contrib.auth.views import redirect_to_login
 from blueapps.account.decorators import login_exempt
 
 
 @login_exempt
-def login_success(request):
-    """
-    弹框登录成功返回页面
-    """
-    return render(request, 'account/login_success.html')
-
-
-@login_exempt
-def login_page(request):
-    """
-    跳转至固定页面，然后弹框登录
-    """
-    refer_url = request.GET.get('refer_url')
-
-    context = {
-        'refer_url': refer_url
-    }
-    return render(request, 'account/login_page.html', context)
+def login_out(request):
+    logout(request)
+    if 'HTTP_REFERER' in request.META:
+        http_referer = request.META['HTTP_REFERER']
+    else:
+        http_referer = settings.SITE_URL
+    login_url = "%s/login/?app_id=%s" % (settings.BK_URL, settings.APP_CODE)
+    return redirect_to_login(http_referer, login_url, 'c_url')
