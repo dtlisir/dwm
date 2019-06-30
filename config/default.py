@@ -3,7 +3,7 @@ from blueapps.conf.log import get_logging_config_dict
 from blueapps.conf.default_settings import *  # noqa
 
 INSTALLED_APPS += (
-    'home',
+    'dashbord',
 )
 
 # 自定义中间件
