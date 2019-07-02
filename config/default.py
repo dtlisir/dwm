@@ -4,6 +4,7 @@ from blueapps.conf.default_settings import *  # noqa
 
 INSTALLED_APPS += (
     'dashbord',
+    'hosts',
 )
 
 # 自定义中间件

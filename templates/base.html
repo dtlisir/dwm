@@ -4,13 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="renderer" content="webkit">
-    <title>DockerWebManager | {% block title %}{% endblock %}</title>
+    <title>DockerWebManager | {% block title %}{% endblock title %}</title>
     <link rel="shortcut icon" href="{{ STATIC_URL }}imgs/facio.ico" type="image/x-icon">
     <!-- css file -->
-    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/font-awesome.min.css" rel="stylesheet">
+    {% block css %}
+        <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+        <link href="{{ STATIC_URL }}css/font-awesome.min.css" rel="stylesheet">
+    {% endblock css %}
     <link href="{{ STATIC_URL }}css/custom.css" rel="stylesheet">
-    {% block custom_css %}{% endblock %}
 </head>
 
 <body class="nav-md">
@@ -25,7 +26,7 @@
         </div>
 
         {% block content %}
-        {% endblock %}
+        {% endblock content %}
 
         <footer>
             {% include "_footer.html" %}
@@ -34,14 +35,16 @@
 </div>
 
 <!-- scripts -->
-<script src="{{ STATIC_URL }}js/jquery.min.js"></script>
-<script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+{% block js %}
+    <script src="{{ STATIC_URL }}js/jquery.min.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+{% endblock js %}
 <script src="{{ STATIC_URL }}js/custom.js"></script>
 <script type="text/javascript">
     var app_code = "{{ APP_CODE }}";		// 在蓝鲸系统里面注册的"应用编码"
     var site_url = "{{ SITE_URL }}";		// app的url前缀,在ajax调用的时候，应该加上该前缀
 </script>
 <script src="{{ STATIC_URL }}js/csrftoken.js"></script>
-{% block custom_js %}{% endblock %}
+{% block custom_js %}{% endblock custom_js %}
 </body>
 </html>

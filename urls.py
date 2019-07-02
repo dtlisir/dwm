@@ -17,7 +17,9 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
     url(r'^account/', include('blueapps.account.urls')),
+    url(r'^hosts/', include('hosts.urls', namespace='hosts')),
+    url(r'^admin/', admin.site.urls),
     url(r'^', include('dashbord.urls', namespace='dashbord')),
+
 ]
