@@ -1201,7 +1201,7 @@ function init_cropper() {
     }).cropper(options);
 
 
-    // Buttons
+    Buttons
     if (!$.isFunction(document.createElement('canvas').getContext)) {
         $('button[data-method="getCroppedCanvas"]').prop('disabled', true);
     }

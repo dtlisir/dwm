@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import HostGroup, HostNode
 
-# Register your models here.
+admin.site.register(HostGroup)
+admin.site.register(HostNode)
+
+

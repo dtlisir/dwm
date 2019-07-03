@@ -1,23 +1,9 @@
 <div class="left_col scroll-view">
     <div class="navbar nav_title" style="border: 0;">
-        <a href="index.html" class="site_title"><i class="fa fa-leaf"></i> <span>Docker管理系统</span></a>
+        <a href="#" class="site_title"><i class="fa fa-cubes"></i> <span>容器管理系统</span></a>
     </div>
 
     <div class="clearfix"></div>
-
-    <!-- menu profile quick info -->
-    <div class="profile clearfix">
-        <div class="profile_pic">
-            <img src="/static/imgs/user.jpg" alt="..." class="img-circle profile_img">
-        </div>
-        <div class="profile_info">
-            <span>欢迎您，</span>
-            <h2>{{ request.user.username }}</h2>
-        </div>
-    </div>
-    <!-- /menu profile quick info -->
-
-    <br/>
 
     <!-- sidebar menu -->
     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
@@ -41,9 +27,7 @@
                 <li><a><i class="fa fa-plug"></i> 节点管理 <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                         <li><a href="{% url 'hosts:node_list' %}">节点列表</a></li>
-                        <li><a href="{% url 'hosts:add_node' %}">新增节点</a></li>
-                        <li><a href="{% url 'hosts:add_group' %}">创建分组</a></li>
-                        <li><a href="#">节点授权</a></li>
+                        <li><a href="{% url 'hosts:group_list' %}">节点组</a></li>
                     </ul>
                 </li>
                 <li><a><i class="fa fa-newspaper-o"></i> 日志管理 <span class="fa fa-chevron-down"></span></a>
