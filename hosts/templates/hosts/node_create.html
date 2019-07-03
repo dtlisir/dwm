@@ -40,11 +40,11 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_name">节点URL
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_url">节点URL
                                     <span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input type="text" name="node_name" required="required" placeholder="格式 IP/域名:端口"
+                                    <input type="text" name="node_url" required="required" placeholder="格式 IP/域名:端口"
                                            class="form-control col-md-7 col-xs-12">
                                 </div>
                             </div>
@@ -60,14 +60,17 @@
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_group">所属组
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input type="text" name="node_group"
-                                           class="form-control col-md-7 col-xs-12">
+                                    <select name="group_id" class="form-control col-md-7 col-xs-12">
+                                        {% for group in groups %}
+                                            <option value="{{ group.id }}">{{ group.name }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_comment">备注</label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <textarea name="g_comment" class="form-control" rows="3"></textarea>
+                                    <textarea name="node_comment" class="form-control" rows="3"></textarea>
                                 </div>
                             </div>
                             <div class="ln_solid"></div>
@@ -81,7 +84,7 @@
                             <br>
                             <div class="form-group">
                                 <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                                    <p style="font-size: 18px; color: #B94A48">{{ info }}</p>
+                                    <p style="font-size: 18px; color: #B94A48">{{ error }}</p>
                                 </div>
                             </div>
                         </form>

@@ -64,15 +64,32 @@
     <script>
         $(function () {
             var node_table = $('#node_list_table').dataTable({
-                columnDefs: [{
-                    targets: 5, createdCell: function (td, cellData, rowData) {
-                        var edit_btn = '<a href="{% url "hosts:node_edit" pk=99999999 %}" class="btn btn-xs btn-info">编辑</a>'
-                            .replace('99999999', cellData);
-                        var del_btn = '<a class="btn btn-xs btn-danger btn_del_group" data-gid="99999999">删除</a>'
-                            .replace('99999999', cellData);
-                        $(td).html(edit_btn + del_btn)
-                    }
-                }],
+                columnDefs: [
+                    {
+                        targets: 0, createdCell: function (td, cellData, rowData) {
+                            detail_btn = '<a href="{% url "hosts:node_detail" pk=99999999 %}">' + cellData + '</a>';
+                            $(td).html(detail_btn.replace("99999999", rowData.id));
+                        }
+                    },
+                    {
+                        targets: 1, createdCell: function (td, cellData, rowData) {
+                            var status_btn = cellData ? '<span class="btn btn-round btn-xs btn-success">UP</span>' :
+                                '<span class="btn btn-round btn-xs btn-danger">Down</span>';
+                            $(td).html(status_btn);
+                        }
+                    },
+                    {
+
+                        targets: 5, createdCell: function (td, cellData, rowData) {
+                            var edit_btn = '<a href="{% url "hosts:node_edit" pk=99999999 %}" class="btn btn-xs btn-info">编辑</a>'
+                                .replace('99999999', cellData);
+                            var del_btn = '<a class="btn btn-xs btn-danger btn_del_group" data-nid="99999999">删除</a>'
+                                .replace('99999999', cellData);
+                            var detail_btn = '<a href="{% url "hosts:node_detail" pk=99999999 %}" class="btn btn-xs btn-primary">详情</a>'
+                                .replace('99999999', cellData);
+                            $(td).html(detail_btn + edit_btn + del_btn)
+                        }
+                    }],
                 ajax: {
                     url: site_url + 'hosts/get_node_list/',
                     dataSrc: "data"
@@ -99,7 +116,7 @@
                 lengthMenu: [[5, 10, 15, -1], [5, 10, 15, "All"]]
             }).on('click', '.btn_del_group', function () {
                 var $this = $(this);
-                var gid = $this.data('gid');
+                var nid = $this.data('nid');
                 swal({
                     title: '是否删除',
                     type: "warning",
@@ -117,11 +134,11 @@
                         url: site_url + 'hosts/node_del/',
                         type: 'get',
                         dataType: 'json',
-                        data: {"id": gid},
+                        data: {"id": nid},
                         success: function (res) {
                             if (res.result) {
                                 swal('删除成功', '', 'success');
-                                $('#group_list_table').DataTable().ajax.reload();
+                                $('#node_list_table').DataTable().ajax.reload();
                             } else {
                                 swal('删除失败', '', 'error');
                             }

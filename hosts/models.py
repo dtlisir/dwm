@@ -17,6 +17,7 @@ class HostGroup(models.Model):
         return {
             'id': self.id,
             'name': self.name,
+            'created_by': self.created_by,
             'node_count': self.host_nodes.filter(group=self.id).count(),
             'date_created': self.date_created.strftime("%Y-%m-%d %H:%M:%S"),
             'comment': self.comment,
@@ -24,7 +25,7 @@ class HostGroup(models.Model):
 
 class HostNode(models.Model):
     name = models.CharField(max_length=64, unique=True, verbose_name='名称')
-    is_active = models.BooleanField(blank=True, null=True, verbose_name='状态')
+    is_active = models.BooleanField(default=False, blank=True, verbose_name='状态')
     check_time = models.DateTimeField(auto_now_add=True, blank=True, verbose_name='检测时间')
     node_url = models.CharField(max_length=128, unique=True, verbose_name='节点URL')
     ip = models.CharField(max_length=32, blank=True, verbose_name='IP')

@@ -9,6 +9,7 @@ urlpatterns = (
     url(r'^node_create/$', views.node_create, name='node_create'),
     url(r'^node_edit/(?P<pk>[0-9]+)/$', views.node_edit, name='node_edit'),
     url(r'^node_del/$', views.node_del, name='node_del'),
+    url(r'^node_detail/(?P<pk>[0-9]+)/$', views.node_detail, name='node_detail'),
 
     url(r'^group_list/$', views.group_list, name='group_list'),
     url(r'^get_group_list/$', views.get_group_list, name='get_group_list'),

@@ -37,6 +37,7 @@
                             <tr>
                                 <th>名称</th>
                                 <th>节点数</th>
+                                <th>创建人</th>
                                 <th>创建时间</th>
                                 <th>备注</th>
                                 <th>动作</th>
@@ -63,22 +64,29 @@
     <script>
         $(function () {
             var group_table = $('#group_list_table').dataTable({
-                columnDefs: [{
-                    targets: 4, createdCell: function (td, cellData, rowData) {
-                        var edit_btn = '<a href="{% url "hosts:group_edit" pk=99999999 %}" class="btn btn-xs btn-info">编辑</a>'
-                            .replace('99999999', cellData);
-                        var del_btn = '<a class="btn btn-xs btn-danger btn_del_group" data-gid="99999999">删除</a>'
-                            .replace('99999999', cellData);
-                        $(td).html(edit_btn + del_btn)
-                    }
-                }],
+                columnDefs: [
+                    {
+                        targets: 4, createdCell: function (td, cellData) {
+                            var innerHtml = cellData.length > 20 ? cellData.substring(0, 20) + '...' : cellData;
+                            $(td).html('<a href="javascript:void(0);" data-toggle="tooltip" title="' + cellData + '">' + innerHtml + '</a>');
+                        }
+                    },
+                    {
+                        targets: 5, createdCell: function (td, cellData, rowData) {
+                            var edit_btn = '<a href="{% url "hosts:group_edit" pk=99999999 %}" class="btn btn-xs btn-info">编辑</a>'
+                                .replace('99999999', cellData);
+                            var del_btn = '<span class="btn btn-xs btn-danger btn_del_group" data-gid="99999999">删除</span>'
+                                .replace('99999999', cellData);
+                            $(td).html(edit_btn + del_btn)
+                        }
+                    }],
                 ajax: {
                     url: site_url + 'hosts/get_group_list/',
                     dataSrc: "data"
                 },
                 columns: [
-                    {data: "name"}, {data: "node_count"}, {data: "date_created"},
-                    {data: "comment"}, {data: "id"}
+                    {data: "name"}, {data: "node_count"}, {data: "created_by"},
+                    {data: "date_created"}, {data: "comment"}, {data: "id"}
                 ],
                 language: {
                     search: "搜索",

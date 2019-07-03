@@ -12,7 +12,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h5>创建分组</h5>
+                        <h5>创建编辑</h5>
                         <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             </li>
@@ -31,18 +31,47 @@
                               class="form-horizontal form-label-left">
                             {% csrf_token %}
                             <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="g_name">组名称
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_name">节点名称
                                     <span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input type="text" name="g_name" required="required"
+                                    <input type="text" name="node_name" required="required" value="{{ node.name }}"
                                            class="form-control col-md-7 col-xs-12">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="g_comment">备注</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_url">节点URL
+                                    <span class="required">*</span>
+                                </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <textarea name="g_comment" class="form-control" rows="3"></textarea>
+                                    <input type="text" name="node_url" required="required" placeholder="格式 IP/域名:端口"
+                                          value="{{ node.node_url }}" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_ip">节点IP
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="text" name="node_ip" value="{{ node.ip }}"
+                                           class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_group">所属组
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <select name="group_id" class="form-control col-md-7 col-xs-12">
+                                        <option value="{{ node.group.id }}">{{ node.group.name }}</option>
+                                        {% for group in groups %}
+                                            <option value="{{ group.id }}">{{ group.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_comment">备注</label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <textarea name="node_comment" class="form-control" rows="3">{{ node.comment }}</textarea>
                                 </div>
                             </div>
                             <div class="ln_solid"></div>
