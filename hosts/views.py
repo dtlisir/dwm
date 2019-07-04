@@ -95,7 +95,9 @@ def node_edit(request, pk):
 
 
 def node_detail(request, pk):
-    return render(request, 'hosts/node_detail.html')
+    node = HostNode.objects.get(id=pk)
+
+    return render(request, 'hosts/node_detail.html', {'node': node})
 
 
 # 组相关
