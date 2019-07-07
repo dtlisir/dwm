@@ -19,6 +19,12 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^account/', include('blueapps.account.urls')),
     url(r'^hosts/', include('hosts.urls', namespace='hosts')),
+    url(r'^containers/', include('containers.urls', namespace='containers')),
+    url(r'^images/', include('images.urls', namespace='images')),
+    url(r'^volumes/', include('volumes.urls', namespace='volumes')),
+    url(r'^networks/', include('networks.urls', namespace='networks')),
+    url(r'^permissions/', include('permissions.urls', namespace='permissions')),
+    url(r'^logs/', include('logs.urls', namespace='logs')),
     url(r'^admin/', admin.site.urls),
     url(r'^', include('dashbord.urls', namespace='dashbord')),
 

@@ -2,6 +2,7 @@ import logging
 from django.shortcuts import render
 from django.http import JsonResponse
 from .models import HostGroup, HostNode
+from common.docker_api import get_docker_info
 
 logger = logging.getLogger('app')
 
@@ -25,20 +26,38 @@ def node_create(request):
             check_name = HostNode.objects.filter(name=node_name)
             if check_name:
                 return render(request, 'hosts/node_create.html', {'groups': groups, 'error': '节点名称已经存在，请重新填写'})
-            check_url = HostNode.objects.filter(node_url=node_url)
+            check_url = HostNode.objects.filter(url=node_url)
             if check_url:
                 return render(request, 'hosts/node_create.html', {'groups': groups, 'error': '节点URL已经存在，请重新填写'})
-            node_group = HostGroup.objects.get(id=group_id)
+            node_group = None
+            if group_id:
+                node_group = HostGroup.objects.get(id=group_id)
+            resp = get_docker_info(node_url)
+            if not resp['result']:
+                return render(request, 'hosts/node_create.html', {'groups': groups, 'error': '节点URL连接失败，请检查'})
+            data = resp['data']
             HostNode.objects.create(
                 name=node_name,
-                node_url=node_url,
+                url=node_url,
                 ip=node_ip,
                 group=node_group,
                 created_by=user,
-                comment=node_comment)
+                comment=node_comment,
+                os = data['OperatingSystem'],
+                os_arch = data['Architecture'],
+                cpu_count = data['NCPU'],
+                memory = data['MemTotal'],
+                active = True,
+                c_running = data['ContainersRunning'],
+                c_paused = data['ContainersPaused'],
+                c_stopped = data['ContainersStopped'],
+                d_version = data['ServerVersion'],
+                c_count = data['Containers'],
+                i_count = data['Images']
+            )
             return render(request, 'hosts/node_list.html')
         except Exception as e:
-            return render(request, 'hosts/node_create.html', {'groups': groups, 'error': '节点创建失败，请检查'})
+            return render(request, 'hosts/node_create.html', {'groups': groups, 'error': str(e)})
 
 
 def get_node_list(request):
@@ -62,15 +81,12 @@ def node_edit(request, pk):
     groups = HostGroup.objects.values('id', 'name')
     node = HostNode.objects.get(id=pk)
     if request.method == 'GET':
-        if groups:
-            return render(request, 'hosts/node_edit.html', {'node': node, 'groups': groups})
-        else:
-            return render(request, 'hosts/node_edit.html', {'node': node})
+        return render(request, 'hosts/node_edit.html', {'node': node, 'groups': groups})
     elif request.method == 'POST':
         node_name = request.POST.get('node_name')
         node_url = request.POST.get('node_url')
         node_ip = request.POST.get('node_ip')
-        group_id = request.POST.get('group_id')
+        group_id = int(request.POST.get('group_id'))
         node_comment = request.POST.get('node_comment')
         try:
             if node_name != node.name:
@@ -78,15 +94,14 @@ def node_edit(request, pk):
                 if check_name:
                     return render(request, 'hosts/node_edit.html', {'node': node, 'groups': groups, 'error': '节点名称已经存在，请重新填写'})
                 node.name = node_name
-            if node_url != node.node_url:
-                check_url = HostNode.objects.filter(node_url=node_url)
+            if node_url != node.url:
+                check_url = HostNode.objects.filter(url=node_url)
                 if check_url:
                     return render(request, 'hosts/node_edit.html', {'node': node, 'groups': groups, 'error': '节点URL已经存在，请重新填写'})
-                node.node_url = node_url
+                node.url = node_url
             node.ip=node_ip
             node_group = HostGroup.objects.get(id=group_id)
-            if node_group:
-                node.group=node_group
+            node.group=node_group
             node.comment=node_comment
             node.save()
             return render(request, 'hosts/node_list.html')
@@ -96,7 +111,6 @@ def node_edit(request, pk):
 
 def node_detail(request, pk):
     node = HostNode.objects.get(id=pk)
-
     return render(request, 'hosts/node_detail.html', {'node': node})
 
 

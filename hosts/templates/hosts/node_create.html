@@ -61,6 +61,7 @@
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
                                     <select name="group_id" class="form-control col-md-7 col-xs-12">
+                                        <option style='display: none'></option>
                                         {% for group in groups %}
                                             <option value="{{ group.id }}">{{ group.name }}</option>
                                         {% endfor %}

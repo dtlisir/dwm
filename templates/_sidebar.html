@@ -12,28 +12,29 @@
             <ul class="nav side-menu">
                 <li><a href="{% url 'dashbord:index' %}"><i class="fa fa-dashboard"></i> 仪表盘 </a>
                 </li>
-                <li><a><i class="fa fa-database"></i> 镜像管理 <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                        <li><a href="form.html">镜像列表</a></li>
-                        <li><a href="form_advanced.html">新增镜像</a></li>
-                    </ul>
-                </li>
                 <li><a><i class="fa fa-server"></i> 容器管理 <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                        <li><a href="general_elements.html">容器列表</a></li>
-                        <li><a href="media_gallery.html">新增容器</a></li>
+                        <li><a href="{% url 'containers:container_list' %}">容器列表</a></li>
+                        <li><a href="{% url 'images:image_list' %}">镜像列表</a></li>
+                        <li><a href="{% url 'volumes:volume_list' %}">卷列表</a></li>
+                        <li><a href="{% url 'networks:network_list' %}">网络列表</a></li>
                     </ul>
                 </li>
-                <li><a><i class="fa fa-plug"></i> 节点管理 <span class="fa fa-chevron-down"></span></a>
+                <li><a><i class="fa fa-plug"></i> 主机管理 <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                        <li><a href="{% url 'hosts:node_list' %}">节点列表</a></li>
-                        <li><a href="{% url 'hosts:group_list' %}">节点组</a></li>
+                        <li><a href="{% url 'hosts:node_list' %}">主机列表</a></li>
+                        <li><a href="{% url 'hosts:group_list' %}">主机组</a></li>
+                    </ul>
+                </li>
+                <li><a><i class="fa fa-plug"></i> 权限管理 <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                        <li><a href="{% url 'permissions:permission_list' %}">主机授权</a></li>
                     </ul>
                 </li>
                 <li><a><i class="fa fa-newspaper-o"></i> 日志管理 <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                        <li><a href="tables.html">登录日志</a></li>
-                        <li><a href="tables_dynamic.html">操作日志</a></li>
+                        <li><a href="{% url 'logs:login_list' %}">登录日志</a></li>
+                        <li><a href="{% url 'logs:ops_list' %}">操作日志</a></li>
                     </ul>
                 </li>
             </ul>

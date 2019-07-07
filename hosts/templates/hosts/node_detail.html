@@ -19,12 +19,6 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                    aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="#">Settings 1</a>
-                                    </li>
-                                    <li><a href="#">Settings 2</a>
-                                    </li>
-                                </ul>
                             </li>
                             <li><a class="close-link"><i class="fa fa-close"></i></a>
                             </li>
@@ -33,25 +27,13 @@
                     </div>
                     <div class="x_content">
                         <br/>
-                        <a class="btn btn-app">
-                            <span class="badge bg-blue">0</span>
-                            <i class="fa fa-th-list"></i> 集群
-                        </a>
-                        <a class="btn btn-app">
-                            <span class="badge bg-green">0</span>
+                        <a href="{% url 'containers:container_list' %}" class="btn btn-app">
+                            <span class="badge bg-blue-sky">{{ node.c_count|default:"0" }}</span>
                             <i class="fa fa-server"></i> 容器
                         </a>
                         <a class="btn btn-app">
-                            <span class="badge bg-orange">0</span>
+                            <span class="badge bg-orange">{{ node.i_count|default:"0" }}</span>
                             <i class="fa fa-clone"></i> 镜像
-                        </a>
-                        <a class="btn btn-app">
-                            <span class="badge bg-purple">0</span>
-                            <i class="fa fa-envelope"></i> 卷
-                        </a>
-                        <a class="btn btn-app">
-                            <span class="badge bg-blue-sky">0</span>
-                            <i class="fa fa-sitemap"></i> 网络
                         </a>
                     </div>
                     <div class="x_content">
@@ -62,27 +44,37 @@
                                     <tbody>
                                     <tr>
                                         <th style="width:30%">操作系统：</th>
-                                        <td>{{ node.os }} {{ node.os_arch }}</td>
+                                        <td>{{ node.os|default:"--" }} {{ node.os_arch }}</td>
                                     </tr>
                                     <tr>
                                         <th>系统信息：</th>
-                                        <td><i class="fa fa-microchip"></i>CPU:-
-                                            <i class="fa fa-ticket"></i>MEMORY:-</td>
+                                        <td><i class="fa fa-microchip"></i>CPU:{{ node.cpu_count|default:"-"  }}
+                                            <i class="fa fa-ticket"></i>MEMORY:{{ node.memory|default:"-"|filesizeformat}}
+                                        </td>
+
                                     </tr>
                                     <tr>
                                         <th>系统状态：</th>
-                                        <td>--</td>
+                                        {% if node.active %}
+                                        <td><span class="label label-success">Success</span></td>
+                                        {% else %}
+                                            <td><span class="label label-danger">Failure</span></td>
+                                        {% endif %}
+                                    </tr>
+                                     <tr>
+                                        <th>检测时间：</th>
+                                        <td>{{ node.check_time }}</td>
                                     </tr>
                                     <tr>
                                         <th>Docker状态：</th>
-                                        <td><i class="fa fa-heartbeat"></i>Run:-
-                                            <i class="fa fa-heart"></i>Pause:-
-                                            <i class="fa fa-heart-o"></i>Stop:-</td>
+                                        <td><i class="fa fa-heartbeat"></i>Run:{{ node.c_running|default:"-" }}
+                                            <i class="fa fa-heart"></i>Pause:{{ node.c_paused|default:"-" }}
+                                            <i class="fa fa-heart-o"></i>Stop:{{ node.c_stopped|default:"-" }}
+                                        </td>
                                     </tr>
-
                                     <tr>
                                         <th>Docker版本：</th>
-                                        <td>--</td>
+                                        <td>{{ node.d_version|default:"--" }}</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -94,31 +86,32 @@
                                     <tbody>
                                     <tr>
                                         <th style="width:30%">节点名称：</th>
-                                        <td>{{ node.name }}</td>
+                                        <td>{{ node.name|default:"--" }}</td>
                                     </tr>
                                     <tr>
                                         <th>节点URL：</th>
-                                        <td>{{ node.node_url }}</td>
+                                        <td>{{ node.url|default:"--" }}</td>
                                     </tr>
                                     <tr>
                                         <th>节点IP：</th>
-                                        <td>{{ node.ip }}</td>
+                                        <td>{{ node.ip|default:"--" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>所属组：</th>
+                                        <td>{{ node.group.name|default:"--" }}</td>
                                     </tr>
                                     <tr>
                                         <th>创建者：</th>
-                                        <td>{{ node.created_by }}</td>
+                                        <td>{{ node.created_by|default:"--" }}</td>
                                     </tr>
                                     <tr>
                                         <th>创建时间：</th>
-                                        <td>{{ node.date_created }}</td>
+                                        <td>{{ node.date_created|default:"--" }}</td>
                                     </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                    </div>
-                    <div class="x_content">
-                        <button class="btn btn-sm btn-primary">刷新数据</button>
                     </div>
                 </div>
             </div>

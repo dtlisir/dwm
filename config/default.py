@@ -5,6 +5,10 @@ from blueapps.conf.default_settings import *  # noqa
 INSTALLED_APPS += (
     'dashbord',
     'hosts',
+    'containers',
+    'images',
+    'volumes',
+    'networks',
 )
 
 # 自定义中间件

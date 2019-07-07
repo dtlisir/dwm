@@ -66,15 +66,9 @@
             var node_table = $('#node_list_table').dataTable({
                 columnDefs: [
                     {
-                        targets: 0, createdCell: function (td, cellData, rowData) {
-                            detail_btn = '<a href="{% url "hosts:node_detail" pk=99999999 %}">' + cellData + '</a>';
-                            $(td).html(detail_btn.replace("99999999", rowData.id));
-                        }
-                    },
-                    {
                         targets: 1, createdCell: function (td, cellData, rowData) {
-                            var status_btn = cellData ? '<span class="btn btn-round btn-xs btn-success">UP</span>' :
-                                '<span class="btn btn-round btn-xs btn-danger">Down</span>';
+                            var status_btn = cellData ? '<span class="label label-success">Success</span>' :
+                                '<span class="label label-danger">Failure</span>';
                             $(td).html(status_btn);
                         }
                     },
@@ -89,14 +83,15 @@
                                 .replace('99999999', cellData);
                             $(td).html(detail_btn + edit_btn + del_btn)
                         }
-                    }],
+                    },
+                    {className: 'text-center', targets: '_all'}
+                ],
                 ajax: {
                     url: site_url + 'hosts/get_node_list/',
-                    dataSrc: "data"
                 },
                 columns: [
-                    {data: "name"}, {data: "is_active"}, {data: "check_time"},
-                    {data: "node_url"}, {data: "group"}, {data: "id"}
+                    {data: "name"}, {data: "active"}, {data: "check_time"},
+                    {data: "url"}, {data: "group"}, {data: "id"}
                 ],
                 language: {
                     search: "搜索",

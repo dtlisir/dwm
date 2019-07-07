@@ -63,7 +63,7 @@
 {% block custom_js %}
     <script>
         $(function () {
-            var group_table = $('#group_list_table').dataTable({
+            var table = $('#group_list_table').dataTable({
                 columnDefs: [
                     {
                         targets: 4, createdCell: function (td, cellData) {
@@ -79,10 +79,11 @@
                                 .replace('99999999', cellData);
                             $(td).html(edit_btn + del_btn)
                         }
-                    }],
+                    },
+                    {className: 'text-center', targets: '_all'}
+                ],
                 ajax: {
                     url: site_url + 'hosts/get_group_list/',
-                    dataSrc: "data"
                 },
                 columns: [
                     {data: "name"}, {data: "node_count"}, {data: "created_by"},
