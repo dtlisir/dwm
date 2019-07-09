@@ -9,6 +9,7 @@ INSTALLED_APPS += (
     'images',
     'volumes',
     'networks',
+    'users',
 )
 
 # 自定义中间件

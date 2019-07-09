@@ -351,7 +351,7 @@ body .container.body .right_col {
 }
 .nav-md .container.body .right_col {
     padding: 10px 20px 0;
-    margin-left: 230px
+    margin-left: 230px;
 }
 .nav_title {
     width: 230px;
@@ -904,7 +904,7 @@ a:focus {
     padding: 4px 6px
 }
 footer {
-    background: #fff;
+    background: #ededed;
     padding: 15px 20px;
     display: block
 }
@@ -1072,7 +1072,7 @@ h2 {
     width: 40%;
     float: right
 }
-.x_title h5 {
+.x_title h2 {
     margin: 5px 0 6px;
     float: left;
     display: block;
@@ -1080,7 +1080,7 @@ h2 {
     overflow: hidden;
     white-space: nowrap
 }
-.x_title h5 small {
+.x_title h2 small {
     margin-left: 10px
 }
 .x_title span {
@@ -1892,7 +1892,7 @@ h4.graph_title {
 }
 .tile-stats .icon i {
     margin: 0;
-    font-size: 60px;
+    font-size: 45px;
     line-height: 0;
     vertical-align: bottom;
     padding: 0
@@ -1912,7 +1912,8 @@ h4.graph_title {
     padding: 0
 }
 .tile-stats h3 {
-    color: #BAB8B8
+    color: #BAB8B8;
+    font-size: 20px;
 }
 .tile-stats p {
     margin-top: 5px;

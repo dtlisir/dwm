@@ -4,7 +4,7 @@
     <div class="right_col" role="main">
         <div class="page-title">
             <div class="title_left">
-                <h4>容器管理</h4>
+                <h4>日志管理</h4>
             </div>
         </div>
         <div class="clearfix"></div>
@@ -12,7 +12,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h5>网络列表</h5>
+                        <h5>登录日志</h5>
                         <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             </li>
@@ -26,26 +26,19 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content">
-                        <table id="network_list_table" class="table table-striped table-bordered table-hover">
+                        <table id="user_list_table" class="table table-striped table-bordered">
                             <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>范围</th>
-                                <th>驱动</th>
-                                <th>子网</th>
-                                <th>网关</th>
-                                <th>创建时间</th>
+                                <th>名称</th>
+                                <th>角色</th>
+                                <th>昵称</th>
+                                <th>最后登录</th>
+                                <th>首次登录</th>
                             </tr>
                             </thead>
                             <tbody>
                             </tbody>
                         </table>
-                        <a href="{% url 'containers:container_create' %}" class="btn btn-sm btn-primary">创建容器</a>
-                        <select class="form-control" id="node_list">
-                            {% for node in nodes %}
-                                <option value="{{ node.id }}">{{ node.name }}</option>
-                            {% endfor %}
-                        </select>
                     </div>
                 </div>
             </div>
@@ -56,24 +49,21 @@
 {% block custom_js %}
     <script>
         $(function () {
-            var node_id = $('#node_list').val();
-            var table = $('#network_list_table').dataTable({
-                dom: 'tip',
+            var table = $('#user_list_table').DataTable({
                 columnDefs: [
                     {
-                        targets: 2, createdCell: function (td, cellData, rowData) {
-                            var status_btn = '<span class="label label-info">' + cellData + '</span>';
-                            $(td).html(status_btn);
+                        targets: 3, createdCell: function (td, cellData, rowData) {
+                            var last_login = '<span style="color: #46b8da;">' + cellData + '</span>';
+                            $(td).html(last_login);
                         }
                     }
                 ],
                 ajax: {
-                    url: site_url + 'networks/get_network_list/',
-                    data: {'node_id': node_id},
+                    url: site_url + 'users/get_user_list/',
                 },
                 columns: [
-                    {data: "short_id"}, {data: "scope"}, {data: "driver"},
-                    {data: "subnet"}, {data: "gateway"}, {data: "created"}
+                    {data: "name"}, {data: "role"}, {data: "nickname"},
+                    {data: "last_login"}, {data: "date_joined"}
                 ],
                 language: {
                     search: "搜索",
@@ -93,5 +83,6 @@
                 lengthMenu: [[5, 10, 15, -1], [5, 10, 15, "All"]]
             });
         });
+
     </script>
 {% endblock custom_js %}

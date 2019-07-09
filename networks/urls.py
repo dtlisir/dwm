@@ -5,4 +5,5 @@ from networks import views
 
 urlpatterns = (
     url(r'^network_list/$', views.network_list, name='network_list'),
+    url(r'^get_network_list/$', views.get_network_list, name='get_network_list'),
 )

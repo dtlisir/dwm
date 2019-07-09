@@ -1,11 +1,5 @@
 {% extends "base.html" %}
 
-{% block css %}
-    {{ block.super }}
-    <link href="{{ STATIC_URL }}css/datatables/datatables.min.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/sweetalert/sweetalert.css" rel="stylesheet">
-{% endblock css %}
-
 {% block content %}
     <div class="right_col" role="main">
         <div class="page-title">
@@ -54,12 +48,6 @@
     </div>
 {% endblock content %}
 
-{% block js %}
-    {{ block.super }}
-    <script src="{{ STATIC_URL }}js/datatables/datatables.min.js"></script>
-    <script src="{{ STATIC_URL }}js/sweetalert/sweetalert.min.js"></script>
-{% endblock js %}
-
 {% block custom_js %}
     <script>
         $(function () {
@@ -79,8 +67,7 @@
                                 .replace('99999999', cellData);
                             $(td).html(edit_btn + del_btn)
                         }
-                    },
-                    {className: 'text-center', targets: '_all'}
+                    }
                 ],
                 ajax: {
                     url: site_url + 'hosts/get_group_list/',
