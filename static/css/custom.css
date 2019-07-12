@@ -181,7 +181,7 @@ html , body{
 }
 .site_title i {
     border: 1px solid #EAEAEA;
-    padding: 5px 6px;
+    padding: 6px;
     border-radius: 50%
 }
 .nav-sm .main_container .top_nav {
@@ -512,7 +512,8 @@ body {
     display: block
 }
 .page-title .title_left h3 {
-    margin: 9px 0
+    margin: 9px 0;
+    font-size: 17px
 }
 .page-title .title_right {
     width: 55%;
@@ -1137,7 +1138,8 @@ legend {
 }
 .profile_details .profile_view .img-circle {
     border: 1px solid #E6E9ED;
-    padding: 2px
+    padding: 2px;
+    float: right;
 }
 .profile_details .profile_view h2 {
     margin: 5px 0
@@ -1867,7 +1869,8 @@ h4.graph_title {
     animation-name: transformAnimation;
     animation-duration: .5s;
     animation-iteration-count: 1;
-    color: rgba(58, 58, 58, 0.41);
+    /*color: rgba(58, 58, 58, 0.41);*/
+    font-size: 50px;
     animation-timing-function: ease;
     animation-fill-mode: forwards;
     -webkit-animation-name: transformAnimation;
@@ -1909,15 +1912,16 @@ h4.graph_title {
     margin: 0;
     margin-left: 10px;
     z-index: 5;
-    padding: 0
+    padding: 0;
 }
 .tile-stats h3 {
-    color: #BAB8B8;
+    color: #5A738E;
     font-size: 20px;
 }
 .tile-stats p {
     margin-top: 5px;
-    font-size: 12px
+    font-size: 12px;
+    font-weight: bold;
 }
 .tile-stats>.dash-box-footer {
     position: relative;

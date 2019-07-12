@@ -73,7 +73,6 @@ function init_sidebar() {
     };
 
     $SIDEBAR_MENU.find('a').on('click', function(ev) {
-        console.log('clicked - sidebar_menu');
         var $li = $(this).parent();
 
         if ($li.is('.active')) {
@@ -217,57 +216,57 @@ $(document).ready(function() {
 // /iCheck
 
 // Table
-// $('table input').on('ifChecked', function() {
-//     checkState = '';
-//     $(this).parent().parent().parent().addClass('selected');
-//     countChecked();
-// });
-// $('table input').on('ifUnchecked', function() {
-//     checkState = '';
-//     $(this).parent().parent().parent().removeClass('selected');
-//     countChecked();
-// });
+$('table input').on('ifChecked', function() {
+    checkState = '';
+    $(this).parent().parent().parent().addClass('selected');
+    countChecked();
+});
+$('table input').on('ifUnchecked', function() {
+    checkState = '';
+    $(this).parent().parent().parent().removeClass('selected');
+    countChecked();
+});
 
-// var checkState = '';
-//
-// $('.bulk_action input').on('ifChecked', function() {
-//     checkState = '';
-//     $(this).parent().parent().parent().addClass('selected');
-//     countChecked();
-// });
-// $('.bulk_action input').on('ifUnchecked', function() {
-//     checkState = '';
-//     $(this).parent().parent().parent().removeClass('selected');
-//     countChecked();
-// });
-// $('.bulk_action input#check-all').on('ifChecked', function() {
-//     checkState = 'all';
-//     countChecked();
-// });
-// $('.bulk_action input#check-all').on('ifUnchecked', function() {
-//     checkState = 'none';
-//     countChecked();
-// });
-//
-// function countChecked() {
-//     if (checkState === 'all') {
-//         $(".bulk_action input[name='table_records']").iCheck('check');
-//     }
-//     if (checkState === 'none') {
-//         $(".bulk_action input[name='table_records']").iCheck('uncheck');
-//     }
-//
-//     var checkCount = $(".bulk_action input[name='table_records']:checked").length;
-//
-//     if (checkCount) {
-//         $('.column-title').hide();
-//         $('.bulk-actions').show();
-//         $('.action-cnt').html(checkCount + ' Records Selected');
-//     } else {
-//         $('.column-title').show();
-//         $('.bulk-actions').hide();
-//     }
-// }
+var checkState = '';
+
+$('.bulk_action input').on('ifChecked', function() {
+    checkState = '';
+    $(this).parent().parent().parent().addClass('selected');
+    countChecked();
+});
+$('.bulk_action input').on('ifUnchecked', function() {
+    checkState = '';
+    $(this).parent().parent().parent().removeClass('selected');
+    countChecked();
+});
+$('.bulk_action input#check-all').on('ifChecked', function() {
+    checkState = 'all';
+    countChecked();
+});
+$('.bulk_action input#check-all').on('ifUnchecked', function() {
+    checkState = 'none';
+    countChecked();
+});
+
+function countChecked() {
+    if (checkState === 'all') {
+        $(".bulk_action input[name='table_records']").iCheck('check');
+    }
+    if (checkState === 'none') {
+        $(".bulk_action input[name='table_records']").iCheck('uncheck');
+    }
+
+    var checkCount = $(".bulk_action input[name='table_records']:checked").length;
+
+    if (checkCount) {
+        $('.column-title').hide();
+        $('.bulk-actions').show();
+        $('.action-cnt').html(checkCount + ' Records Selected');
+    } else {
+        $('.column-title').show();
+        $('.bulk-actions').hide();
+    }
+}
 
 // Accordion
 $(document).ready(function() {
@@ -1911,8 +1910,6 @@ function init_PNotify() {
 
 function init_CustomNotification() {
 
-    console.log('run_customtabs');
-
     if (typeof(CustomTabs) === 'undefined') {
         return;
     }
@@ -2440,7 +2437,6 @@ function init_compose() {
     if (typeof($.fn.slideToggle) === 'undefined') {
         return;
     }
-    console.log('init_compose');
 
     $('#compose, .compose-close').click(function() {
         $('.compose').slideToggle();
@@ -2617,6 +2613,23 @@ function init_DataTables() {
     $('#datatable-fixed-header').DataTable({
         fixedHeader: true
     });
+
+    var $datatable = $('#datatable-checkbox');
+
+    $datatable.dataTable({
+        'order': [
+            [1, 'asc']
+        ],
+        'columnDefs': [
+            { orderable: false, targets: [0] }
+        ]
+    });
+    $datatable.on('draw.dt', function() {
+        $('checkbox input').iCheck({
+            checkboxClass: 'icheckbox_flat-green'
+        });
+    });
+
     TableManageButtons.init();
 
 };
@@ -5067,7 +5080,6 @@ function init_echarts() {
 
 
 $(document).ready(function() {
-
     init_sparklines();
     init_flot_chart();
     init_sidebar();
@@ -5086,13 +5098,13 @@ $(document).ready(function() {
     init_daterangepicker_reservation();
     init_SmartWizard();
     init_EasyPieChart();
-    init_charts();
-    init_echarts();
+    // init_charts();
+    // init_echarts();
     init_morris_charts();
     init_skycons();
     init_select2();
     init_validator();
-    init_DataTables();
+    // init_DataTables();
     init_chart_doughnut();
     init_gauge();
     init_PNotify();

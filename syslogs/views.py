@@ -3,8 +3,8 @@ from django.http import JsonResponse
 from blueapps.account.models import User
 from django.shortcuts import render
 
-def login_list(request):
-    return render(request, 'users/login_list.html')
+def user_list(request):
+    return render(request, 'syslogs/user_list.html')
 
 
 def get_user_list(request):
@@ -21,11 +21,5 @@ def get_user_list(request):
         data.append(user_dict)
     return JsonResponse({'data': data})
 
-
-def user_detail(request):
-    username = request.user.username
-    user = User.objects.get(username=username)
-    return render(request, 'users/user_detail', {'user': user})
-
 def ops_list(request):
-    return render(request, 'users/ops_list.html')
+    return render(request, 'syslogs/ops_list.html')

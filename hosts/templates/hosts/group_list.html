@@ -4,7 +4,7 @@
     <div class="right_col" role="main">
         <div class="page-title">
             <div class="title_left">
-                <h4>节点管理</h4>
+                <h3>主机管理</h3>
             </div>
         </div>
         <div class="clearfix"></div>
@@ -12,7 +12,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h5>分组列表</h5>
+                        <h2>分组列表</h2>
                         <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             </li>
@@ -40,6 +40,7 @@
                             <tbody>
                             </tbody>
                         </table>
+                        <div class="clearfix"></div>
                         <a href="{% url 'hosts:group_create' %}" class="btn btn-sm btn-success">创建组</a>
                     </div>
                 </div>
@@ -51,11 +52,11 @@
 {% block custom_js %}
     <script>
         $(function () {
-            var table = $('#group_list_table').dataTable({
+            var table = $('#group_list_table').DataTable({
                 columnDefs: [
                     {
                         targets: 4, createdCell: function (td, cellData) {
-                            var innerHtml = cellData.length > 20 ? cellData.substring(0, 20) + '...' : cellData;
+                            var innerHtml = cellData.length > 25 ? cellData.substring(0, 25) + '...' : cellData;
                             $(td).html('<a href="javascript:void(0);" data-toggle="tooltip" title="' + cellData + '">' + innerHtml + '</a>');
                         }
                     },

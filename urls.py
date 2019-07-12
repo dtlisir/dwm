@@ -24,8 +24,7 @@ urlpatterns = [
     url(r'^volumes/', include('volumes.urls', namespace='volumes')),
     url(r'^networks/', include('networks.urls', namespace='networks')),
     url(r'^permissions/', include('permissions.urls', namespace='permissions')),
-    url(r'^users/', include('users.urls', namespace='users')),
+    url(r'^syslogs/', include('syslogs.urls', namespace='syslogs')),
     url(r'^admin/', admin.site.urls),
-    url(r'^', include('dashbord.urls', namespace='dashbord')),
-
+    url(r'^', include('home.urls', namespace='home')),
 ]

@@ -1,10 +1,10 @@
-{% extends "base.html" %}
+{% extends "dbase.html" %}
 
 {% block content %}
     <div class="right_col" role="main">
         <div class="page-title">
             <div class="title_left">
-                <h4>节点管理</h4>
+                <h3>节点管理</h3>
             </div>
         </div>
         <div class="clearfix"></div>
@@ -12,7 +12,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h5>节点详情</h5>
+                        <h2>节点详情</h2>
                         <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             </li>
@@ -31,7 +31,7 @@
                             <span class="badge bg-blue-sky">{{ node.c_count|default:"0" }}</span>
                             <i class="fa fa-server"></i> 容器
                         </a>
-                        <a class="btn btn-app">
+                        <a href="{% url 'images:image_list' %}" class="btn btn-app">
                             <span class="badge bg-orange">{{ node.i_count|default:"0" }}</span>
                             <i class="fa fa-clone"></i> 镜像
                         </a>

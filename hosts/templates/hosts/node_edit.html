@@ -4,7 +4,7 @@
     <div class="right_col" role="main">
         <div class="page-title">
             <div class="title_left">
-                <h4>节点管理</h4>
+                <h3>主机管理</h3>
             </div>
         </div>
         <div class="clearfix"></div>
@@ -12,7 +12,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h5>创建编辑</h5>
+                        <h2>编辑主机</h2>
                         <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             </li>
@@ -31,28 +31,38 @@
                               class="form-horizontal form-label-left">
                             {% csrf_token %}
                             <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_name">节点名称
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_name">主机名称
                                     <span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input type="text" name="node_name" required="required" value="{{ node.name }}"
+                                    <input type="text" id="node_name" name="node_name" required="required"
+                                           value="{{ node.name }}"
                                            class="form-control col-md-7 col-xs-12">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_url">节点URL
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_url">主机URL
                                     <span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input type="text" name="node_url" required="required" placeholder="格式 IP/域名:端口"
+                                    <input type="text" id="node_url" name="node_url" required="required"
+                                           placeholder="格式 IP/域名:端口"
                                            value="{{ node.url }}" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                    <button type="button" id="test_btn" class="btn btn-sm btn-info"
+                                            style="margin-bottom: 0;">测试连接
+                                    </button>
+                                    <span id="test_url"></span>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_ip">节点IP
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input type="text" name="node_ip" value="{{ node.ip }}"
+                                    <input type="text" id="node_ip" name="node_ip" value="{{ node.ip }}"
                                            class="form-control col-md-7 col-xs-12">
                                 </div>
                             </div>
@@ -60,7 +70,7 @@
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_group">所属组
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <select name="group_id" class="form-control col-md-7 col-xs-12">
+                                    <select id="node_group" name="node_group" class="form-control col-md-7 col-xs-12">
                                         <option style='display: none'></option>
                                         {% for group in groups %}
                                             {% if group.id == node.group.id %}
@@ -76,28 +86,95 @@
                             <div class="form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_comment">备注</label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <textarea name="node_comment" class="form-control"
+                                    <textarea id="node_comment" name="node_comment" class="form-control"
                                               rows="3">{{ node.comment }}</textarea>
                                 </div>
                             </div>
                             <div class="ln_solid"></div>
                             <div class="form-group">
                                 <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                                    <button type="submit" class="btn btn-success">提交</button>
+                                    <button type="button" id="edit_btn" class="btn btn-success">提交</button>
                                     <a href="{% url 'hosts:node_list' %}" class="btn btn-primary">返回</a>
-
-                                </div>
-                            </div>
-                            <br>
-                            <div class="form-group">
-                                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                                    <p style="font-size: 18px; color: #B94A48">{{ error }}</p>
+                                    <span id="edit_node"></span>
                                 </div>
                             </div>
                         </form>
+                    </div>
+                    <div id="loading"
+                         style="display: none;position: absolute;z-index: 10000;width: 100%;top: 0;height: 550px;text-align: center;padding-top: 200px;">
+                        <i class="fa fa-spinner fa-pulse fa-4x"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 {% endblock content %}
+
+{% block custom_js %}
+    <script>
+        $(document).ready(function () {
+            $('#test_btn').click(function () {
+                var node_url = $('#node_url').val();
+                var _html = '';
+                if (node_url === '') {
+                    _html = '<span style="color: #D9534F;font-weight: bold;">主机URL不能为空</span>';
+                    $('#test_url').html(_html);
+                    return
+                }
+                $('#loading').css('display', 'block');
+                $.get(site_url + 'hosts/test_node_conn/', {'node_url': node_url}, function (data) {
+                    $('#loading').css('display', 'none');
+                    if (data.result) {
+                        _html = '<span style="color: #26B99A;font-weight: bold;">主机连接成功</span>';
+                        $('#test_url').html(_html);
+                    } else {
+                        _html = '<span style="color: #D9534F;font-weight: bold;">主机连接失败</span>';
+                        $('#test_url').html(_html);
+                    }
+                }, 'json')
+            });
+            $('#edit_btn').click(function () {
+                var n_name = $('#node_name').val();
+                var n_url = $('#node_url').val();
+                var _html = '';
+                if (n_name === '') {
+                    _html = '<span style="color: #D9534F;font-weight: bold;">主机名称不能为空</span>';
+                    $('#edit_node').html(_html);
+                    return
+                }
+                if (n_url === '') {
+                    _html = '<span style="color: #D9534F;font-weight: bold;">主机URL不能为空</span>';
+                    $('#edit_node').html(_html);
+                    return
+                }
+                var node_id = {{ node.id }};
+                var node_name = n_name;
+                var node_url = n_url;
+                var node_ip = $('#node_ip').val();
+                var node_group = $('#node_group').val();
+                var node_comment = $('#node_comment').val();
+
+                $('#loading').css('display', 'block');
+                $.post(site_url + 'hosts/post_edit_node/',
+                    {
+                        'node_id': node_id,
+                        'node_name': node_name,
+                        'node_url': node_url,
+                        'node_ip': node_ip,
+                        'node_group': node_group,
+                        'node_comment': node_comment,
+                    },
+                    function (data) {
+                        $('#loading').css('display', 'none');
+                        if (data.result) {
+                            swal(data.message, '', 'success');
+                            window.location = {% url 'hosts:node_list' %};
+                        } else {
+                            _html = '<span style="color: #D9534F;font-weight: bold;">' + data.message + '</span>';
+                            $('#edit_node').html(_html);
+                        }
+                    }, 'json')
+            });
+        });
+    </script>
+{% endblock custom_js %}

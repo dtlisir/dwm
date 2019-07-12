@@ -1,0 +1,442 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="right_col" role="main">
+        <div class="">
+            <div class="row top_tiles">
+                <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="tile-stats">
+                        <div class="icon" style="color: #3498DB;"><i class="fa fa-server"></i></div>
+                        <div class="count">{{ host_count|default:"0" }}</div>
+                        <h3>主机总数</h3>
+                        <p>NODES</p>
+                    </div>
+                </div>
+                <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="tile-stats">
+                        <div class="icon" style="color: #9B59B6;"><i class="fa fa-users"></i></div>
+                        <div class="count">{{ user_count|default:"0" }}</div>
+                        <h3>用户总数</h3>
+                        <p>USERS</p>
+                    </div>
+                </div>
+                <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="tile-stats">
+                        <div class="icon" style="color: #26B99A;"><i class="fa fa-cubes"></i></div>
+                        <div class="count">{{ container_count|default:"0" }}</div>
+                        <h3>容器总数</h3>
+                        <p>CONTAINERS</p>
+                    </div>
+                </div>
+                <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="tile-stats">
+                        <div class="icon" style="color: #337AB7;"><i class="fa fa-window-restore"></i></div>
+                        <div class="count">{{ image_count|default:"0" }}</div>
+                        <h3>镜像总数</h3>
+                        <p>IMAGES</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 col-sm-8 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_content">
+
+                            <div id="ci_top5" style="height:280px;"></div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_content">
+
+                            <div id="rsp_echart" style="height:280px;"></div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            {% if nodes %}
+                {% for node in nodes %}
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-12 profile_details">
+                            <div class="well profile_view">
+                                <div class="col-sm-12">
+                                    <h4 class="brief"><i>{{ node.name }}</i></h4>
+                                    <div class="left col-xs-7">
+                                        <h2>操作系统：{{ node.os|default:"--" }} {{ node.os_arch }}</h2>
+                                        <ul class="list-unstyled">
+                                            <li><i class="fa fa-microchip"></i>CPU:{{ node.cpu_count|default:"-"  }}
+                                            <i class="fa fa-ticket"></i>MEMORY:{{ node.memory|default:"-"|filesizeformat}}</li>
+                                            <li><i class="fa fa-heartbeat"></i>Run:{{ node.c_running|default:"-" }}
+                                            <i class="fa fa-heart"></i>Pause:{{ node.c_paused|default:"-" }}
+                                            <i class="fa fa-heart-o"></i>Stop:{{ node.c_stopped|default:"-" }}</li>
+                                            <li>检测时间：{{ node.check_time }}</li>
+                                        </ul>
+                                    </div>
+                                    <div class="right col-xs-5 text-center">
+                                        <img src="/static/imgs/docker.png" alt="" class="img-circle img-responsive">
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 bottom text-center">
+                                    <div class="col-xs-12 col-sm-6 emphasis">
+                                        <p class="ratings">
+                                            {% if node.active %}
+                                                <span class="label label-success">Success</span>
+                                            {% else %}
+                                                <span class="label label-danger">Failure</span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 emphasis">
+                                        {% if node.active %}
+                                        <a class="btn btn-primary btn-xs"><i class="fa fa-user"> </i>管理</a>
+                                        {% endif %}
+                                        <a class="btn btn-primary btn-xs"><i class="fa fa-user"> </i>编辑</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script src="{{ STATIC_URL }}js/echarts/echarts.min.js"></script>
+    <script>
+        var theme = {
+            color: [
+                '#26B99A', '#34495E', '#BDC3C7', '#3498DB',
+                '#9B59B6', '#8abb6f', '#759c6a', '#bfd3b7'
+            ],
+
+            title: {
+                itemGap: 8,
+                textStyle: {
+                    fontWeight: 'normal',
+                    color: '#408829'
+                }
+            },
+
+            dataRange: {
+                color: ['#1f610a', '#97b58d']
+            },
+
+            toolbox: {
+                color: ['#408829', '#408829', '#408829', '#408829']
+            },
+
+            tooltip: {
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                axisPointer: {
+                    type: 'line',
+                    lineStyle: {
+                        color: '#408829',
+                        type: 'dashed'
+                    },
+                    crossStyle: {
+                        color: '#408829'
+                    },
+                    shadowStyle: {
+                        color: 'rgba(200,200,200,0.3)'
+                    }
+                }
+            },
+
+            dataZoom: {
+                dataBackgroundColor: '#eee',
+                fillerColor: 'rgba(64,136,41,0.2)',
+                handleColor: '#408829'
+            },
+            grid: {
+                borderWidth: 0
+            },
+
+            categoryAxis: {
+                axisLine: {
+                    lineStyle: {
+                        color: '#408829'
+                    }
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: ['#eee']
+                    }
+                }
+            },
+
+            valueAxis: {
+                axisLine: {
+                    lineStyle: {
+                        color: '#408829'
+                    }
+                },
+                splitArea: {
+                    show: true,
+                    areaStyle: {
+                        color: ['rgba(250,250,250,0.1)', 'rgba(200,200,200,0.1)']
+                    }
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: ['#eee']
+                    }
+                }
+            },
+            timeline: {
+                lineStyle: {
+                    color: '#408829'
+                },
+                controlStyle: {
+                    normal: {color: '#408829'},
+                    emphasis: {color: '#408829'}
+                }
+            },
+
+            k: {
+                itemStyle: {
+                    normal: {
+                        color: '#68a54a',
+                        color0: '#a9cba2',
+                        lineStyle: {
+                            width: 1,
+                            color: '#408829',
+                            color0: '#86b379'
+                        }
+                    }
+                }
+            },
+            map: {
+                itemStyle: {
+                    normal: {
+                        areaStyle: {
+                            color: '#ddd'
+                        },
+                        label: {
+                            textStyle: {
+                                color: '#c12e34'
+                            }
+                        }
+                    },
+                    emphasis: {
+                        areaStyle: {
+                            color: '#99d2dd'
+                        },
+                        label: {
+                            textStyle: {
+                                color: '#c12e34'
+                            }
+                        }
+                    }
+                }
+            },
+            force: {
+                itemStyle: {
+                    normal: {
+                        linkStyle: {
+                            strokeColor: '#408829'
+                        }
+                    }
+                }
+            },
+            chord: {
+                padding: 4,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 1,
+                            color: 'rgba(128, 128, 128, 0.5)'
+                        },
+                        chordStyle: {
+                            lineStyle: {
+                                width: 1,
+                                color: 'rgba(128, 128, 128, 0.5)'
+                            }
+                        }
+                    },
+                    emphasis: {
+                        lineStyle: {
+                            width: 1,
+                            color: 'rgba(128, 128, 128, 0.5)'
+                        },
+                        chordStyle: {
+                            lineStyle: {
+                                width: 1,
+                                color: 'rgba(128, 128, 128, 0.5)'
+                            }
+                        }
+                    }
+                }
+            },
+            gauge: {
+                startAngle: 225,
+                endAngle: -45,
+                axisLine: {
+                    show: true,
+                    lineStyle: {
+                        color: [
+                            [0.2, '#86b379'],
+                            [0.8, '#68a54a'],
+                            [1, '#408829']
+                        ],
+                        width: 8
+                    }
+                },
+                axisTick: {
+                    splitNumber: 10,
+                    length: 12,
+                    lineStyle: {
+                        color: 'auto'
+                    }
+                },
+                axisLabel: {
+                    textStyle: {
+                        color: 'auto'
+                    }
+                },
+                splitLine: {
+                    length: 18,
+                    lineStyle: {
+                        color: 'auto'
+                    }
+                },
+                pointer: {
+                    length: '90%',
+                    color: 'auto'
+                },
+                title: {
+                    textStyle: {
+                        color: '#333'
+                    }
+                },
+                detail: {
+                    textStyle: {
+                        color: 'auto'
+                    }
+                }
+            },
+            textStyle: {
+                fontFamily: 'Arial, Verdana, sans-serif'
+            }
+        };
+        var echartBar = echarts.init(document.getElementById('ci_top5'), theme);
+
+        echartBar.setOption({
+            title: {
+                text: '容器数量TOP5',
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                x: 'center',
+                y: 'bottom',
+                data: ['容器', '镜像']
+            },
+            toolbox: {
+                show: false
+            },
+            calculable: false,
+            xAxis: [{
+                type: 'category',
+                data: {{ ip_list|safe }}
+            }],
+            yAxis: [{
+                type: 'value'
+            }],
+            series: [{
+                name: '容器',
+                type: 'bar',
+                data: {{ c_count_list|safe }},
+            }, {
+                name: '镜像',
+                type: 'bar',
+                data: {{ i_count_list|safe }},
+            }]
+        });
+        var echartDonut = echarts.init(document.getElementById('rsp_echart'), theme);
+
+        echartDonut.setOption({
+            title: {
+                text: '容器状态汇总',
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            calculable: true,
+            legend: {
+                x: 'center',
+                y: 'bottom',
+                data: ['运行', '停止', '暂停']
+            },
+            toolbox: {
+                show: false,
+                feature: {
+                    magicType: {
+                        show: true,
+                        type: ['pie', 'funnel'],
+                        option: {
+                            funnel: {
+                                x: '25%',
+                                width: '50%',
+                                funnelAlign: 'center',
+                                max: 1548
+                            }
+                        }
+                    },
+                    restore: {
+                        show: true,
+                        title: "Restore"
+                    },
+                    saveAsImage: {
+                        show: true,
+                        title: "Save Image"
+                    }
+                }
+            },
+            series: [{
+                name: '总容器状态',
+                type: 'pie',
+                radius: ['35%', '55%'],
+                itemStyle: {
+                    normal: {
+                        label: {
+                            show: true
+                        },
+                        labelLine: {
+                            show: true
+                        }
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            position: 'center',
+                            textStyle: {
+                                fontSize: '14',
+                                fontWeight: 'normal'
+                            }
+                        }
+                    }
+                },
+                data: [{
+                    value: {{ c_running_count|default:0}},
+                    name: '运行'
+                }, {
+                    value: {{ c_stopped_count|default:0 }},
+                    name: '停止'
+                }, {
+                    value: {{ c_paused_count|default:0 }},
+                    name: '暂停'
+                }]
+            }]
+        });
+
+    </script>
+
+{% endblock custom_js %}

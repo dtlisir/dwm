@@ -4,7 +4,7 @@
     <div class="right_col" role="main">
         <div class="page-title">
             <div class="title_left">
-                <h4>节点管理</h4>
+                <h3>主机管理</h3>
             </div>
         </div>
         <div class="clearfix"></div>
@@ -12,7 +12,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h5>节点列表</h5>
+                        <h2>主机列表</h2>
                         <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             </li>
@@ -32,7 +32,7 @@
                                 <th>名称</th>
                                 <th>状态</th>
                                 <th>检测时间</th>
-                                <th>节点URL</th>
+                                <th>主机URL</th>
                                 <th>所属组</th>
                                 <th>动作</th>
                             </tr>
@@ -40,7 +40,8 @@
                             <tbody>
                             </tbody>
                         </table>
-                        <a href="{% url 'hosts:node_create' %}" class="btn btn-sm btn-success">创建节点</a>
+                        <div class="clearfix"></div>
+                        <a href="{% url 'hosts:node_create' %}" class="btn btn-sm btn-success">添加主机</a>
                     </div>
                 </div>
             </div>
@@ -51,7 +52,7 @@
 {% block custom_js %}
     <script>
         $(function () {
-            var node_table = $('#node_list_table').dataTable({
+            var table = $('#node_list_table').DataTable({
                 columnDefs: [
                     {
                         targets: 1, createdCell: function (td, cellData, rowData) {
@@ -71,8 +72,7 @@
                                 .replace('99999999', cellData);
                             $(td).html(detail_btn + edit_btn + del_btn)
                         }
-                    },
-                    {className: 'text-center', targets: '_all'}
+                    }
                 ],
                 ajax: {
                     url: site_url + 'hosts/get_node_list/',
