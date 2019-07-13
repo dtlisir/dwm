@@ -56,9 +56,9 @@
                 columnDefs: [
                     {
                         targets: 1, createdCell: function (td, cellData, rowData) {
-                            var status_btn = cellData ? '<span class="label label-success">Success</span>' :
+                            var status_label = cellData ? '<span class="label label-success">Success</span>' :
                                 '<span class="label label-danger">Failure</span>';
-                            $(td).html(status_btn);
+                            $(td).html(status_label);
                         }
                     },
                     {

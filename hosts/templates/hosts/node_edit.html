@@ -168,7 +168,7 @@
                         $('#loading').css('display', 'none');
                         if (data.result) {
                             swal(data.message, '', 'success');
-                            window.location = {% url 'hosts:node_list' %};
+                            window.location = '{% url 'hosts:node_list' %}';
                         } else {
                             _html = '<span style="color: #D9534F;font-weight: bold;">' + data.message + '</span>';
                             $('#edit_node').html(_html);

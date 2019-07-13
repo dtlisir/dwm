@@ -12,6 +12,7 @@
         <link href="{{ STATIC_URL }}css/font-awesome.min.css" rel="stylesheet">
         <link href="{{ STATIC_URL }}css/datatables/datatables.min.css" rel="stylesheet">
         <link href="{{ STATIC_URL }}css/sweetalert/sweetalert.css" rel="stylesheet">
+        <link href="{{ STATIC_URL }}css/select2/select2.min.css" rel="stylesheet">
     {% endblock css %}
     <link href="{{ STATIC_URL }}css/custom.css" rel="stylesheet">
 </head>
@@ -20,7 +21,11 @@
 <div class="container body">
     <div class="main_container">
         <div class="col-md-3 left_col">
-            {% include "hsidebar.html" %}
+            {% if request.user.is_superuser %}
+                {% include "hsidebar.html" %}
+            {% else %}
+                {% include "usidebar.html" %}
+            {% endif %}
         </div>
 
         <div class="top_nav">
@@ -42,6 +47,8 @@
     <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
     <script src="{{ STATIC_URL }}js/datatables/datatables.min.js"></script>
     <script src="{{ STATIC_URL }}js/sweetalert/sweetalert.min.js"></script>
+    <script src="{{ STATIC_URL }}js/select2/select2.full.min.js"></script>
+
 {% endblock js %}
 <script src="{{ STATIC_URL }}js/custom.js"></script>
 <script type="text/javascript">

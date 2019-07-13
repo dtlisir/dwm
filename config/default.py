@@ -9,6 +9,7 @@ INSTALLED_APPS += (
     'images',
     'volumes',
     'networks',
+    'permissions',
     'syslogs',
 )
 

@@ -18,4 +18,6 @@ from home import views
 
 urlpatterns = (
     url(r'^$', views.index, name='index'),
+    url(r'^user/$', views.index_user, name='index_user'),
+    url(r'^forbiden/$', views.forbiden, name='forbiden'),
 )

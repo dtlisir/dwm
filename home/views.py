@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from hosts.models import HostNode
 from blueapps.account.models import User
 from django.db.models.aggregates import Sum
@@ -8,6 +8,8 @@ from django.db.models.aggregates import Sum
 # 开发框架中通过中间件默认是需要登录态的，如有不需要登录的，可添加装饰器login_exempt
 # 装饰器引入 from blueapps.account.decorators import login_exempt
 def index(request):
+    if not request.user.is_superuser:
+        return redirect('home:index_user')
     nodes = HostNode.objects.all()
     host_count = nodes.count()
     user_count = User.objects.all().count()
@@ -40,3 +42,13 @@ def index(request):
         'c_paused_count': c_paused_count,
     }
     return render(request, 'home/index.html', context)
+
+
+def index_user(request):
+    user = request.user.username
+    nodes = HostNode.objects.filter(users__username=user)
+    return render(request, 'home/index_user.html', {'nodes': nodes})
+
+
+def forbiden(request):
+    return render(request, 'home/forbiden.html')

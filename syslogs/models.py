@@ -13,8 +13,10 @@ class Log(models.Model):
 
     def to_dict(self):
         return {
-            'id': self.id,
             'user': self.user,
+            'type': self.type,
+            'action': self.action,
+            'state': self.state,
             'content': self.content,
             'time_ops': self.time_ops.strftime("%Y-%m-%d %H:%M:%S"),
         }

@@ -1,25 +1,19 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from blueapps.account.models import User
-from django.shortcuts import render
+from syslogs.models import Log
 
-def user_list(request):
-    return render(request, 'syslogs/user_list.html')
-
-
-def get_user_list(request):
-    users = User.objects.all()
-    data = []
-    for user in users:
-        user_dict = {
-            'name': user.username,
-            'role': '管理员' if user.is_superuser else '普通用户',
-            'nickname': user.nickname,
-            'last_login': user.last_login.strftime("%Y-%m-%d %H:%M:%S"),
-            'date_joined': user.date_joined.strftime("%Y-%m-%d %H:%M:%S"),
-        }
-        data.append(user_dict)
-    return JsonResponse({'data': data})
 
 def ops_list(request):
     return render(request, 'syslogs/ops_list.html')
+
+
+def get_ops_list(request):
+    if request.user.is_superuser:
+        logs = Log.objects.all()
+    else:
+        user = request.user.username
+        logs = Log.objects.filter(user=user)
+    data = []
+    if logs:
+        data = [log.to_dict() for log in logs]
+    return JsonResponse({'data': data})

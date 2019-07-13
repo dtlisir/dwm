@@ -1,5 +1,5 @@
 import logging
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from .models import HostGroup, HostNode
 from syslogs.models import Log
@@ -8,6 +8,8 @@ from common.docker_api import get_docker_info
 
 # 主机相关
 def node_list(request):
+    if not request.user.is_superuser:
+        return redirect('home:forbiden')
     return render(request, 'hosts/node_list.html')
 
 
@@ -18,11 +20,15 @@ def test_node_conn(request):
 
 
 def node_create(request):
+    if not request.user.is_superuser:
+        return redirect('home:forbiden')
     groups = HostGroup.objects.values('id', 'name')
     return render(request, 'hosts/node_create.html', {'groups': groups})
 
 
 def post_create_node(request):
+    if not request.user.is_superuser:
+        JsonResponse({'result': False, 'message': 'Permission denied'})
     node_name = request.POST.get('node_name')
     node_url = request.POST.get('node_url')
     node_ip = request.POST.get('node_ip')
@@ -80,6 +86,8 @@ def post_create_node(request):
 
 
 def get_node_list(request):
+    if not request.user.is_superuser:
+        JsonResponse({'result': False, 'message': 'Permission denied'})
     nodes = HostNode.objects.all()
     data = []
     if nodes:
@@ -88,6 +96,8 @@ def get_node_list(request):
 
 
 def node_del(request):
+    if not request.user.is_superuser:
+        JsonResponse({'result': False, 'message': 'Permission denied'})
     id = int(request.GET.get('id'))
     user = request.user.username
     try:
@@ -112,12 +122,16 @@ def node_del(request):
 
 
 def node_edit(request, pk):
+    if not request.user.is_superuser:
+        return redirect('home:forbiden')
     groups = HostGroup.objects.values('id', 'name')
     node = HostNode.objects.get(id=pk)
     return render(request, 'hosts/node_edit.html', {'node': node, 'groups': groups})
 
 
 def post_edit_node(request):
+    if not request.user.is_superuser:
+        JsonResponse({'result': False, 'message': 'Permission denied'})
     node_id = request.POST.get('node_id')
     node_name = request.POST.get('node_name')
     node_url = request.POST.get('node_url')
@@ -163,16 +177,26 @@ def post_edit_node(request):
 
 
 def node_detail(request, pk):
-    node = HostNode.objects.get(id=pk)
+    if request.user.is_superuser:
+        node = HostNode.objects.get(id=pk)
+    else:
+        user = request.user.username
+        node = HostNode.objects.filter(id=pk, users__username=user)
+        if not node:
+            return redirect('home:forbiden')
     return render(request, 'hosts/node_detail.html', {'node': node})
 
 
 # 组相关
 def group_list(request):
+    if not request.user.is_superuser:
+        return redirect('home:forbiden')
     return render(request, 'hosts/group_list.html')
 
 
 def get_group_list(request):
+    if not request.user.is_superuser:
+        JsonResponse({'result': False, 'message': 'Permission denied'})
     groups = HostGroup.objects.all()
     data = []
     if groups:
@@ -181,10 +205,14 @@ def get_group_list(request):
 
 
 def group_create(request):
+    if not request.user.is_superuser:
+        return redirect('home:forbiden')
     return render(request, 'hosts/group_create.html')
 
 
 def post_create_group(request):
+    if not request.user.is_superuser:
+        JsonResponse({'result': False, 'message': 'Permission denied'})
     group_name = request.POST.get('group_name')
     group_comment = request.POST.get('group_comment')
     user = request.user.username
@@ -216,11 +244,15 @@ def post_create_group(request):
 
 
 def group_edit(request, pk):
+    if not request.user.is_superuser:
+        return redirect('home:forbiden')
     group = HostGroup.objects.get(id=pk)
     return render(request, 'hosts/group_edit.html', {'group': group})
 
 
 def post_edit_group(request):
+    if not request.user.is_superuser:
+        JsonResponse({'result': False, 'message': 'Permission denied'})
     group_id = request.POST.get('group_id')
     group_name = request.POST.get('group_name')
     group_comment = request.POST.get('group_comment')
@@ -252,6 +284,8 @@ def post_edit_group(request):
 
 
 def group_del(request):
+    if not request.user.is_superuser:
+        JsonResponse({'result': False, 'message': 'Permission denied'})
     id = int(request.GET.get('id'))
     user = request.user.username
     try:

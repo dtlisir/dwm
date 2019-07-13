@@ -4,7 +4,7 @@
     <div class="right_col" role="main">
         <div class="page-title">
             <div class="title_left">
-                <h4>日志管理</h4>
+                <h3>权限管理</h3>
             </div>
         </div>
         <div class="clearfix"></div>
@@ -12,7 +12,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h5>登录日志</h5>
+                        <h2>用户列表</h2>
                         <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             </li>
@@ -59,7 +59,7 @@
                     }
                 ],
                 ajax: {
-                    url: site_url + 'users/get_user_list/',
+                    url: site_url + 'permissions/get_user_list/',
                 },
                 columns: [
                     {data: "name"}, {data: "role"}, {data: "nickname"},
@@ -83,6 +83,5 @@
                 lengthMenu: [[5, 10, 15, -1], [5, 10, 15, "All"]]
             });
         });
-
     </script>
 {% endblock custom_js %}

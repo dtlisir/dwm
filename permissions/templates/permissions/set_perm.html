@@ -4,7 +4,7 @@
     <div class="right_col" role="main">
         <div class="page-title">
             <div class="title_left">
-                <h3>主机管理</h3>
+                <h3>权限管理</h3>
             </div>
         </div>
         <div class="clearfix"></div>
@@ -12,7 +12,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h2>创建分组</h2>
+                        <h2>主机授权</h2>
                         <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             </li>
@@ -31,26 +31,33 @@
                               class="form-horizontal form-label-left">
                             {% csrf_token %}
                             <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="group_name">组名称
-                                    <span class="required">*</span>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="perm_node">主机
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input type="text" id="group_name" name="group_name" required="required"
-                                           class="form-control col-md-7 col-xs-12">
+                                    <select id="perm_node" name="perm_node" class="node_select form-control">
+                                        <option style="display: none;"></option>
+                                        {% for node in nodes %}
+                                            <option value="{{ node.id }}">{{ node.name }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="group_comment">备注</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="perm_user">用户
+                                </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <textarea id="group_comment" name="group_comment" class="form-control" rows="3"></textarea>
+                                    <select id="perm_user" name="perm_user" multiple="multiple" class="user_select form-control">
+                                        {% for user in users %}
+                                            <option value="{{ user.id }}">{{ user.username }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
                             <div class="ln_solid"></div>
                             <div class="form-group">
                                 <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                                    <button type="button" id="create_btn" class="btn btn-success">提交</button>
-                                    <button class="btn btn-primary" type="reset">重置</button>
-                                    <span id="create_group"></span>
+                                    <button type="button" id="perm_btn" class="btn btn-success">授权</button>
+                                    <span id="perm_info"></span>
                                 </div>
                             </div>
                         </form>
@@ -64,28 +71,39 @@
 {% block custom_js %}
     <script>
         $(document).ready(function () {
-            $('#create_btn').click(function () {
-                var g_name = $('#group_name').val();
+            var node = $('.node_select');
+            node.select2();
+            $('.user_select').select2({
+                multiple: true
+            });
+            node.change(function () {
+                $.get(site_url + 'permissions/get_node_users/',{'node_id': node.val()},
+                    function (res) {
+                       $('.user_select').val(res.data).trigger('change');
+                    }, 'json')
+            });
+            $('#perm_btn').click(function () {
+                var n_id = $('#perm_node').val();
                 var _html = '';
-                if (g_name === '') {
-                    _html = '<span style="color: #D9534F;font-weight: bold;">组名称不能为空</span>';
-                    $('#create_group').html(_html);
+                if (n_id === '') {
+                    _html = '<span style="color: #D9534F;font-weight: bold;">主机名不能为空</span>';
+                    $('#perm_info').html(_html);
                     return
-                }
-                var group_name = g_name;
-                var group_comment = $('#group_comment').val();
-                $.post(site_url + 'hosts/post_create_group/',
+                 }
+                var node_id = n_id;
+                var user_list = $('.user_select').select2('val');
+                $.post(site_url + 'permissions/post_perm_set/',
                     {
-                        'group_name': group_name,
-                        'group_comment': group_comment,
+                        'node_id': node_id,
+                        'user_list': user_list,
                     },
                     function (data) {
                         if (data.result) {
                             swal(data.message, '', 'success');
-                            window.location = '{% url 'hosts:group_list' %}';
+                            window.location = '{% url 'home:index' %}';
                         } else {
                             _html = '<span style="color: #D9534F;font-weight: bold;">' + data.message + '</span>';
-                            $('#create_group').html(_html);
+                            $('#perm_info').html(_html);
                         }
                     }, 'json')
             });

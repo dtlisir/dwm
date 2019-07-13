@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="right_col" role="main">
+        <div class="">
+            {% if nodes %}
+                {% for node in nodes %}
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-12 profile_details">
+                            <div class="well profile_view">
+                                <div class="col-sm-12">
+                                    <h4 class="brief"><i>{{ node.name }}</i></h4>
+                                    <div class="left col-xs-7">
+                                        <h2>操作系统：{{ node.os|default:"--" }} {{ node.os_arch }}</h2>
+                                        <ul class="list-unstyled">
+                                            <li><i class="fa fa-microchip"></i>CPU:{{ node.cpu_count|default:"-"  }}
+                                            <i class="fa fa-ticket"></i>MEMORY:{{ node.memory|default:"-"|filesizeformat}}</li>
+                                            <li><i class="fa fa-heartbeat"></i>Run:{{ node.c_running|default:"-" }}
+                                            <i class="fa fa-heart"></i>Pause:{{ node.c_paused|default:"-" }}
+                                            <i class="fa fa-heart-o"></i>Stop:{{ node.c_stopped|default:"-" }}</li>
+                                            <li>检测时间：{{ node.check_time }}</li>
+                                        </ul>
+                                    </div>
+                                    <div class="right col-xs-5 text-center">
+                                        <img src="/static/imgs/docker.png" alt="" class="img-circle img-responsive">
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 bottom text-center">
+                                    <div class="col-xs-12 col-sm-6 emphasis">
+                                        <p class="ratings">
+                                            {% if node.active %}
+                                                <span class="label label-success">Success</span>
+                                            {% else %}
+                                                <span class="label label-danger">Failure</span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 emphasis">
+                                        {% if node.active %}
+                                        <a class="btn btn-primary btn-xs"><i class="fa fa-user"> </i>管理</a>
+                                        {% endif %}
+                                        <a class="btn btn-primary btn-xs"><i class="fa fa-user"> </i>编辑</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <h3>您没有可操作的主机，请联系管理员授权。</h3>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}
