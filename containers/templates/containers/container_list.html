@@ -4,7 +4,7 @@
     <div class="right_col" role="main">
         <div class="page-title">
             <div class="title_left">
-                <h4>容器管理</h4>
+                <h3>容器管理</h3>
             </div>
         </div>
         <div class="clearfix"></div>
@@ -12,7 +12,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h5>容器列表</h5>
+                        <h2>容器列表</h2>
                         <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             </li>
@@ -26,20 +26,9 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content">
-                        <div class="btn-toolbar" id="tb">
-                            <div class="btn-group">
-                                <button class="btn btn-sm btn-success" type="button">启动</button>
-                                <button class="btn btn-sm btn-danger" type="button">停止</button>
-                                <button class="btn btn-sm btn-warning" type="button">重启</button>
-                                <button class="btn btn-sm btn-danger" type="button">删除</button>
-                            </div>
-                        </div>
                         <table id="container_list_table" class="table table-striped table-bordered">
                             <thead>
                             <tr>
-                                <th class="text-center">
-                                    <input type="checkbox" class="ipt_check_all">
-                                </th>
                                 <th>名称</th>
                                 <th>状态</th>
                                 <th>镜像</th>
@@ -52,11 +41,6 @@
                         </table>
                         <div class="clearfix"></div>
                         <a href="{% url 'containers:container_create' %}" class="btn btn-sm btn-primary">创建容器</a>
-                        <select class="form-control" id="node_list">
-                            {% for node in nodes %}
-                                <option value="{{ node.id }}">{{ node.name }}</option>
-                            {% endfor %}
-                        </select>
                     </div>
                 </div>
             </div>
@@ -67,50 +51,42 @@
 {% block custom_js %}
     <script>
         $(function () {
-            var node_id = $('#node_list').val();
-            var dwm = {};
-            dwm.checked = false;
-            dwm.selected = {};
             var table = $('#container_list_table').DataTable({
-                dom: 'tip',
                 columnDefs: [
                     {
-                        targets: 0,
-                        orderable: false,
-                        createdCell: function (td, cellData) {
-                            $(td).html('<input type="checkbox" class="text-center ipt_check" id=99999999>'.replace('99999999', cellData));
+                        targets: 1, createdCell: function (td, cellData, rowData) {
+                            var status_label = (cellData === 'running')? '<span class="label label-success">' + cellData + '</span>' :
+                                '<span class="label label-danger">' + cellData + '</span>';
+                            $(td).html(status_label);
                         }
                     },
                     {
-                        targets: 2, createdCell: function (td, cellData, rowData) {
-                            var status_btn = '<span class="label label-success">' + cellData + '</span>';
-                            $(td).html(status_btn);
-                        }
-                    },
-                    {
-                        targets: 5,
+                        targets: 4,
                         orderable: false,
                         createdCell: function (td, cellData, rowData) {
-                            var status_btn = '<span class="btn btn-xs btn-info">查看详情</span>';
-                            $(td).html(status_btn);
+                            var detail_btn = '<a href="{% url "containers:container_detail" id=99999999 %}" class="btn btn-xs btn-primary">详情</a>'
+                                .replace('99999999', cellData);
+                            var del_btn = '<span class="btn btn-xs btn-danger btn_del_group" data-gid="99999999">删除</span>'
+                                .replace('99999999', cellData);
+                            $(td).html(detail_btn + del_btn);
                         }
                     }
                 ],
                 ajax: {
                     url: site_url + 'containers/get_container_list/',
-                    data: {'node_id': node_id},
+                    type: 'post',
+                    data: {
+                        'node_url': '{{ node.node_url }}',
+                    }
                 },
                 columns: [
-                    {data: "c_id"}, {data: "name"}, {data: "status"},
-                    {data: "image"}, {data: "created"}, {data: "c_id"},
+                    {data: "name"}, {data: "status"}, {data: "image"},
+                    {data: "created"}, {data: "c_id"},
                 ],
-                select: {
-                    style: 'multi',
-                    selector: 'td:first-child'
-                },
                 order: [],
                 language: {
                     search: "搜索",
+                    lengthMenu: "每页  _MENU_",
                     info: "显示第 _START_ 至 _END_ 项结果; 总共 _TOTAL_ 项",
                     infoFiltered: "",
                     infoEmpty: "",
@@ -123,28 +99,8 @@
                         last: "»"
                     },
                 },
-                pageLength: 10,
+                lengthMenu: [[5, 10, 15, -1], [5, 10, 15, "All"]]
             });
-            table.on('select', function (e, dt, type, indexes) {
-                var $node = table[type](indexes).nodes().to$();
-                $node.find('input.ipt_check').prop('checked', true);
-                dwm.selected[$node.find('input.ipt_check').prop('id')] = true
-            }).on('deselect', function (e, dt, type, indexes) {
-                var $node = table[type](indexes).nodes().to$();
-                $node.find('input.ipt_check').prop('checked', false);
-                dwm.selected[$node.find('input.ipt_check').prop('id')] = false
-            });
-            $('.ipt_check_all').on('click', function () {
-                if ($(this).prop("checked")) {
-                    $(this).closest('table').find('.ipt_check').prop('checked', true);
-                    dwm.checked = true;
-                    table.rows({search: 'applied', page: 'current'}).select();
-                } else {
-                    $(this).closest('table').find('.ipt_check').prop('checked', false);
-                    dwm.checked = false;
-                    table.rows({search: 'applied', page: 'current'}).deselect();
-                }
-             });
         });
     </script>
 {% endblock custom_js %}

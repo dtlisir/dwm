@@ -11,11 +11,11 @@
             <h3></h3>
             <ul class="nav side-menu">
                 <li><a href="{% url 'home:index' %}"><i class="fa fa-dashboard"></i> 首页 </a></li>
-                <li><a href="{% url 'hosts:node_detail' node.id %}"><i class="fa fa-dashboard"></i> 主机详情 </a></li>
-                <li><a href="{% url 'containers:container_list' node.id %}"><i class="fa fa-dashboard"></i> 容器列表 </a></li>
-                <li><a href="{% url 'images:image_list' node.id %}"><i class="fa fa-dashboard"></i> 镜像列表 </a></li>
-                <li><a href="{% url 'volumes:volume_list' node.id %}"><i class="fa fa-dashboard"></i> 卷列表 </a></li>
-                <li><a href="{% url 'networks:network_list' node.id %}"><i class="fa fa-dashboard"></i> 网络列表 </a></li>
+                <li><a href="{% url 'hosts:curr_detail'%}"><i class="fa fa-server"></i> 主机详情 </a></li>
+                <li><a href="{% url 'containers:container_list' %}"><i class="fa fa-cubes"></i> 容器列表 </a></li>
+                <li><a href="{% url 'images:image_list'%}"><i class="fa fa-window-restore"></i> 镜像列表 </a></li>
+                <li><a href="{% url 'volumes:volume_list'%}"><i class="fa fa-database"></i> 卷列表 </a></li>
+                <li><a href="{% url 'networks:network_list'%}"><i class="fa fa-sitemap"></i> 网络列表 </a></li>
             </ul>
         </div>
     </div>

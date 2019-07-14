@@ -42,8 +42,9 @@ def get_node_users(request):
     node_id = int(request.GET.get('node_id'))
     try:
         node = HostNode.objects.get(id=node_id)
-        users_id_list = node.users_set.values('id')
-        return JsonResponse({'data': users_id_list})
+        id_list = node.users_set.values('id')
+        user_id_list = [ data.get('id') for data in id_list]
+        return JsonResponse({'data': user_id_list})
     except Exception as e:
         return JsonResponse({'data': []})
 
@@ -55,6 +56,7 @@ def post_perm_set(request):
     try:
         node_id = int(request.POST.get('node_id'))
         user_list = request.POST.get('user_list')
+        print(user_list)
         user_id_list = [int(user) for user in user_list]
         node = HostNode.objects.get(id=node_id)
         users = User.objects.filter(id__in=user_id_list)

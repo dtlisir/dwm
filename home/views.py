@@ -24,7 +24,7 @@ def index(request):
     image_totle = nodes.aggregate(totles=Sum('i_count'))
     image_count = image_totle['totles']
     node_container_top5 = nodes.order_by('-c_count')[:5]
-    ip_list = [ node.url.split[':'][0] for node in node_container_top5]
+    ip_list = [ node.url.split(':')[0] for node in node_container_top5]
     c_count_list = [ node.c_count for node in node_container_top5]
     i_count_list = [ node.i_count for node in node_container_top5]
 

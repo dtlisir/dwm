@@ -9,7 +9,7 @@ from syslogs.models import Log
 from common.docker_api import get_docker_info
 
 
-@periodic_task(run_every=crontab(minute='*/30', hour='*', day_of_week="*"))
+@periodic_task(run_every=crontab(minute='*/2', hour='*', day_of_week="*"))
 def check_node_data_periodic():
     try:
         nodes = HostNode.objects.all()
@@ -22,7 +22,6 @@ def check_node_data_periodic():
                 node.cpu_count = data['NCPU'],
                 node.memory = data['MemTotal'],
                 node.active = True,
-                node.check_time = timezone.now(),
                 node.c_running = data['ContainersRunning'],
                 node.c_paused = data['ContainersPaused'],
                 node.c_stopped = data['ContainersStopped'],
@@ -34,7 +33,19 @@ def check_node_data_periodic():
                 node.active = False
                 node.save()
             time.sleep(1)
-        Log.objects.create(user='system', type='HOST', action='CHECK', content='主机巡检成功')
+        # Log.objects.create(
+        #     user='system',
+        #     type='HOST',
+        #     action='CHECK',
+        #     state=True,
+        #     content='主机巡检成功'
+        # )
     except Exception as e:
-        Log.objects.create(user='system', type='HOST', action='CHECK', content='主机巡检失败')
+        Log.objects.create(
+            user='system',
+            type='HOST',
+            action='CHECK',
+            state=False,
+            content='主机巡检失败，原因：%s' % (str(e))
+        )
 

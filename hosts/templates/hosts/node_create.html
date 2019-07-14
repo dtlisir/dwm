@@ -160,8 +160,14 @@
                     function (data) {
                         $('#loading').css('display', 'none');
                         if (data.result) {
-                            swal(data.message, '', 'success');
-                            window.location = '{% url 'hosts:node_list' %}';
+                            swal({
+                                title: data.message,
+                                type: 'success',
+                                confirmButtonText: '确定',
+                                closeOnConfirm : false,
+                            },function () {
+                                window.location = '{% url 'hosts:node_list' %}';
+                            });
                         } else {
                             _html = '<span style="color: #D9534F;font-weight: bold;">' + data.message + '</span>';
                             $('#add_node').html(_html);

@@ -9,10 +9,10 @@ def ops_list(request):
 
 def get_ops_list(request):
     if request.user.is_superuser:
-        logs = Log.objects.all()
+        logs = Log.objects.all().order_by('-id')
     else:
         user = request.user.username
-        logs = Log.objects.filter(user=user)
+        logs = Log.objects.filter(user=user).order_by('-id')
     data = []
     if logs:
         data = [log.to_dict() for log in logs]

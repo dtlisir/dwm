@@ -1,7 +1,7 @@
 import logging
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from .models import HostGroup, HostNode
+from .models import HostGroup, HostNode, CurrNode
 from syslogs.models import Log
 from common.docker_api import get_docker_info
 
@@ -88,7 +88,7 @@ def post_create_node(request):
 def get_node_list(request):
     if not request.user.is_superuser:
         JsonResponse({'result': False, 'message': 'Permission denied'})
-    nodes = HostNode.objects.all()
+    nodes = HostNode.objects.all().order_by('-id')
     data = []
     if nodes:
         data = [node.to_dict() for node in nodes]
@@ -140,19 +140,21 @@ def post_edit_node(request):
     node_comment = request.POST.get('node_comment')
     user = request.user.username
     try:
-        if HostNode.objects.filter(name=node_name):
-            return  JsonResponse({'result': False, 'message': '主机名称已经存在，请重新填写'})
-        if HostNode.objects.filter(url=node_url):
-            return  JsonResponse({'result': False, 'message': '主机URL已经存在，请重新填写'})
+        node = HostNode.objects.get(id=node_id)
+        if node_name != node.name:
+            if HostNode.objects.filter(name=node_name):
+                return  JsonResponse({'result': False, 'message': '主机名称已经存在，请重新填写'})
+            node.name = node_name
+        if node_url != node.url:
+            if HostNode.objects.filter(url=node_url):
+                return  JsonResponse({'result': False, 'message': '主机URL已经存在，请重新填写'})
+            node.url = node.url
         group = None
         if node_group:
             group = HostGroup.objects.get(id=node_group)
         resp = get_docker_info(node_url)
         if not resp['result']:
             return  JsonResponse({'result': False, 'message': '主机URL连接失败，请检查'})
-        node = HostNode.objects.get(id=node_id)
-        node.name = node_name
-        node.url = node.url
         node.ip = node_ip
         node.group = group
         node.comment = node_comment
@@ -184,6 +186,23 @@ def node_detail(request, pk):
         node = HostNode.objects.filter(id=pk, users__username=user)
         if not node:
             return redirect('home:forbiden')
+    if CurrNode.objects.all():
+        curr_node = CurrNode.objects.all()[0]
+        curr_node.node_id = node.id
+        curr_node.node_name = node.name
+        curr_node.node_url = node.url
+        curr_node.save()
+    else:
+        CurrNode.objects.create(node_id=node.id, node_name=node.name, node_url=node.url)
+    return render(request, 'hosts/node_detail.html', {'node': node})
+
+
+def curr_detail(request):
+    curr_node = CurrNode.objects.all()
+    if not curr_node:
+        return render(request, 'home/select_node.html')
+    node_id = curr_node[0].node_id
+    node = HostNode.objects.get(id=node_id)
     return render(request, 'hosts/node_detail.html', {'node': node})
 
 
@@ -197,7 +216,7 @@ def group_list(request):
 def get_group_list(request):
     if not request.user.is_superuser:
         JsonResponse({'result': False, 'message': 'Permission denied'})
-    groups = HostGroup.objects.all()
+    groups = HostGroup.objects.all().order_by('-id')
     data = []
     if groups:
         data = [group.to_dict() for group in groups]
@@ -219,7 +238,7 @@ def post_create_group(request):
     try:
         if HostGroup.objects.filter(name=group_name):
             return  JsonResponse({'result': False, 'message': '组名称已经存在，请重新填写'})
-        HostNode.objects.create(
+        HostGroup.objects.create(
             name=group_name,
             created_by=user,
             comment=group_comment,
@@ -258,10 +277,11 @@ def post_edit_group(request):
     group_comment = request.POST.get('group_comment')
     user = request.user.username
     try:
-        if HostGroup.objects.filter(name=group_name):
-            return  JsonResponse({'result': False, 'message': '组名称已经存在，请重新填写'})
         group = HostGroup.objects.get(id=group_id)
-        group.name = group_name
+        if group_name != group.name:
+            if HostGroup.objects.filter(name=group_name):
+                return  JsonResponse({'result': False, 'message': '组名称已经存在，请重新填写'})
+            group.name = group_name
         group.comment = group_comment
         group.save()
         Log.objects.create(

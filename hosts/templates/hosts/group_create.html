@@ -48,8 +48,8 @@
                             <div class="ln_solid"></div>
                             <div class="form-group">
                                 <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                                    <button type="button" id="create_btn" class="btn btn-success">提交</button>
-                                    <button class="btn btn-primary" type="reset">重置</button>
+                                    <button type="button" id="create_btn" class="btn btn-sm btn-success">提交</button>
+                                    <button class="btn btn-sm btn-primary" type="reset">重置</button>
                                     <span id="create_group"></span>
                                 </div>
                             </div>
@@ -81,8 +81,14 @@
                     },
                     function (data) {
                         if (data.result) {
-                            swal(data.message, '', 'success');
-                            window.location = '{% url 'hosts:group_list' %}';
+                            swal({
+                                title: data.message,
+                                type: 'success',
+                                confirmButtonText: '确定',
+                                closeOnConfirm : false,
+                            },function () {
+                                window.location = '{% url 'hosts:group_list' %}';
+                            });
                         } else {
                             _html = '<span style="color: #D9534F;font-weight: bold;">' + data.message + '</span>';
                             $('#create_group').html(_html);

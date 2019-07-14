@@ -1,10 +1,142 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "dbase.html" %}
 
-</body>
-</html>
+{% block content %}
+    <div class="right_col" role="main">
+        <div class="page-title">
+            <div class="title_left">
+                <h3>容器管理</h3>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>容器详情</h2>
+                        <ul class="nav navbar-right panel_toolbox">
+                            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                   aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                            </li>
+                            <li><a class="close-link"><i class="fa fa-close"></i></a>
+                            </li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <div class="btn-toolbar" id="tb">
+                            <div id="controll_btns" class="btn-group">
+                                <button id="start_btn" class="btn btn-sm btn-success" type="button">启动</button>
+                                <button id="stop_btn" class="btn btn-sm btn-danger" type="button">停止</button>
+                                <button id="restart_btn" class="btn btn-sm btn-warning" type="button">重启</button>
+                                <button id="pause_btn" class="btn btn-sm btn-warning" type="button">暂停</button>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                <tr>
+                                    <th style="width:15%">容器ID：</th>
+                                    <td>{{ data.id|default:"--" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>名称：</th>
+                                    <td>{{ data.name|default:"--" }}</td>
+
+                                </tr>
+                                <tr>
+                                    <th>系统状态：</th>
+                                    {% if data.status == 'running' %}
+                                        <td><span
+                                                class="label label-success c_status">{{ data.status|default:"--" }}</span>
+                                        </td>
+                                    {% else %}
+                                        <td><span
+                                                class="label label-danger c_status">{{ data.status|default:"--" }}</span>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <th>镜像ID：</th>
+                                    <td>{{ data.image_id|default:"--" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>镜像名称：</th>
+                                    <td>{{ data.image_name|default:"--" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>创建时间：</th>
+                                    <td>{{ data.created|default:"--" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>所属主机：</th>
+                                    <td>{{ data.node_name|default:"--" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>主机URL：</th>
+                                    <td>{{ data.node_url|default:"--" }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="loading"
+                         style="display: none;position: absolute;z-index: 10000;width: 100%;top: 0;height: 550px;text-align: center;padding-top: 200px;">
+                        <i class="fa fa-spinner fa-pulse fa-4x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block custom_js %}
+    <script>
+        $(function () {
+            var status = $('.c_status').text();
+            if (status === 'running') {
+                $('#start_btn').attr('disabled', true);
+            } else if (status === 'exited') {
+                $('#stop_btn').attr('disabled', true);
+                $('#pause_btn').attr('disabled', true);
+            } else if (status === 'paused') {
+                $('#pause_btn').attr('disabled', true);
+            } else if (status === '--') {
+                $('#controll_btns button').attr('disabled', true);
+            }
+            $('#start_btn').click(function () {
+                $('#loading').css('display', 'block');
+                $.post(site_url + 'containers/post_container_start/',
+                    {
+                        'node_url': {{ data.node_url }},
+                        'c_id': {{ data.id }},
+                    },
+                    function (data) {
+                        $('#loading').css('display', 'none');
+                        if (data.result) {
+                            swal({
+                                title: data.message,
+                                type: 'success',
+                                confirmButtonText: '确定',
+                                closeOnConfirm: false,
+                            }, function () {
+                                window.location = '{% url 'hosts:node_list' %}';
+                            });
+                        } else {
+                            _html = '<span style="color: #D9534F;font-weight: bold;">' + data.message + '</span>';
+                            $('#add_node').html(_html);
+                        }
+                    }, 'json')
+            });
+            $('#stop_btn').click(function () {
+
+            });
+            $('#restart_btn').click(function () {
+
+            });
+        });
+    </script>
+{% endblock custom_js %}

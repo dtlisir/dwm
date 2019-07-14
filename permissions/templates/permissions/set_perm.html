@@ -79,6 +79,7 @@
             node.change(function () {
                 $.get(site_url + 'permissions/get_node_users/',{'node_id': node.val()},
                     function (res) {
+                        console.log(res.data);
                        $('.user_select').val(res.data).trigger('change');
                     }, 'json')
             });
@@ -92,20 +93,28 @@
                  }
                 var node_id = n_id;
                 var user_list = $('.user_select').select2('val');
-                $.post(site_url + 'permissions/post_perm_set/',
-                    {
-                        'node_id': node_id,
-                        'user_list': user_list,
-                    },
-                    function (data) {
+                console.log(user_list);
+                $.ajax({
+                    url: site_url + 'permissions/post_perm_set/',
+                    data: {'node_id': node_id, 'user_list': user_list},
+                    type: 'post',
+                    traditional: true,
+                    success: function (data) {
                         if (data.result) {
-                            swal(data.message, '', 'success');
-                            window.location = '{% url 'home:index' %}';
+                            swal({
+                                title: data.message,
+                                type: 'success',
+                                confirmButtonText: '确定',
+                                closeOnConfirm : false,
+                            },function () {
+                                window.location = '{% url 'home:index' %}';
+                            });
                         } else {
                             _html = '<span style="color: #D9534F;font-weight: bold;">' + data.message + '</span>';
                             $('#perm_info').html(_html);
                         }
-                    }, 'json')
+                    }
+                });
             });
         });
     </script>

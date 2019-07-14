@@ -5,9 +5,11 @@ import docker
 def get_docker_info(url):
     try:
         client = docker.DockerClient(base_url=url)
-        data = client.info()
-        resp = {'result': True, 'data': data}
-        client.close()
+        try:
+            data = client.info()
+            resp = {'result': True, 'data': data}
+        finally:
+            client.close()
     except Exception as e:
         resp = {'result': False, 'message': str(e)}
     return resp
@@ -16,9 +18,24 @@ def get_docker_info(url):
 def get_containers(url):
     try:
         client = docker.DockerClient(base_url=url)
-        data = client.containers.list(all=True)
-        resp = {'result': True, 'data': data}
-        client.close()
+        try:
+            data = client.containers.list(all=True)
+            resp = {'result': True, 'data': data}
+        finally:
+            client.close()
+    except Exception as e:
+        resp = {'result': False, 'message': str(e)}
+    return resp
+
+
+def get_container_detail(url, id):
+    try:
+        client = docker.DockerClient(base_url=url)
+        try:
+            data = client.containers.get(id)
+            resp = {'result': True, 'data': data}
+        finally:
+            client.close()
     except Exception as e:
         resp = {'result': False, 'message': str(e)}
     return resp
@@ -27,21 +44,21 @@ def get_containers(url):
 def run_container(url, image, **kwargs):
     try:
         client = docker.DockerClient(base_url=url)
-        data = client.containers.run(image, detach=True, **kwargs)
-        resp = {'result': True, 'data': data}
-        client.close()
+        try:
+            data = client.containers.run(image, detach=True, **kwargs)
+            resp = {'result': True, 'data': data}
+        finally:
+            client.close()
     except Exception as e:
         resp = {'result': False, 'message': str(e)}
     return resp
 
 
-
 def get_images(url):
     try:
-        client = docker.DockerClient(base_url=url)
-        data = client.images.list()
-        resp = {'result': True, 'data': data}
-        client.close()
+        with docker.DockerClient(base_url=url) as client:
+            data = client.images.list()
+            resp = {'result': True, 'data': data}
     except Exception as e:
         resp = {'result': False, 'message': str(e)}
     return resp
@@ -50,9 +67,11 @@ def get_images(url):
 def get_volumes(url):
     try:
         client = docker.DockerClient(base_url=url)
-        data = client.volumes.list()
-        resp = {'result': True, 'data': data}
-        client.close()
+        try:
+            data = client.volumes.list()
+            resp = {'result': True, 'data': data}
+        finally:
+            client.close()
     except Exception as e:
         resp = {'result': False, 'message': str(e)}
     return resp
@@ -61,9 +80,11 @@ def get_volumes(url):
 def get_networks(url):
     try:
         client = docker.DockerClient(base_url=url)
-        data = client.networks.list()
-        resp = {'result': True, 'data': data}
-        client.close()
+        try:
+            data = client.networks.list()
+            resp = {'result': True, 'data': data}
+        finally:
+            client.close()
     except Exception as e:
         resp = {'result': False, 'message': str(e)}
     return resp

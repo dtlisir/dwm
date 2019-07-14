@@ -58,31 +58,32 @@
                 </div>
             </div>
             <div class="clearfix"></div>
-            {% if nodes %}
-                {% for node in nodes %}
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6 col-xs-12 profile_details">
+            <div class="row">
+                {% if nodes %}
+                    {% for node in nodes %}
+                        <div class="col-md-4 col-sm-6 col-xs-12 profile_details">
                             <div class="well profile_view">
                                 <div class="col-sm-12">
                                     <h4 class="brief"><i>{{ node.name }}</i></h4>
-                                    <div class="left col-xs-7">
-                                        <h2>操作系统：{{ node.os|default:"--" }} {{ node.os_arch }}</h2>
+                                    <div class="left col-xs-9">
                                         <ul class="list-unstyled">
-                                            <li><i class="fa fa-microchip"></i>CPU:{{ node.cpu_count|default:"-"  }}
-                                            <i class="fa fa-ticket"></i>MEMORY:{{ node.memory|default:"-"|filesizeformat}}</li>
+                                            <li>系统：{{ node.os|default:"--" }}</li>
+                                            <li><i class="fa fa-microchip"></i>CPU:{{ node.cpu_count|default:"-" }}
+                                                <i class="fa fa-ticket"></i>MEMORY:{{ node.memory|default:"-"|filesizeformat }}
+                                            </li>
                                             <li><i class="fa fa-heartbeat"></i>Run:{{ node.c_running|default:"-" }}
-                                            <i class="fa fa-heart"></i>Pause:{{ node.c_paused|default:"-" }}
-                                            <i class="fa fa-heart-o"></i>Stop:{{ node.c_stopped|default:"-" }}</li>
+                                                <i class="fa fa-heart"></i>Pause:{{ node.c_paused|default:"-" }}
+                                                <i class="fa fa-heart-o"></i>Stop:{{ node.c_stopped|default:"-" }}</li>
                                             <li>检测时间：{{ node.check_time }}</li>
                                         </ul>
                                     </div>
-                                    <div class="right col-xs-5 text-center">
+                                    <div class="right col-xs-3 text-center">
                                         <img src="/static/imgs/docker.png" alt="" class="img-circle img-responsive">
                                     </div>
                                 </div>
-                                <div class="col-xs-12 bottom text-center">
-                                    <div class="col-xs-12 col-sm-6 emphasis">
-                                        <p class="ratings">
+                                <div class="col-xs-12 bottom">
+                                    <div class="col-xs-12 col-sm-4 emphasis text-left">
+                                        <p style="margin-top: 3px;">
                                             {% if node.active %}
                                                 <span class="label label-success">Success</span>
                                             {% else %}
@@ -90,18 +91,23 @@
                                             {% endif %}
                                         </p>
                                     </div>
-                                    <div class="col-xs-12 col-sm-6 emphasis">
+                                    <div class="col-xs-12 col-sm-8 emphasis text-right">
                                         {% if node.active %}
-                                        <a class="btn btn-primary btn-xs"><i class="fa fa-user"> </i>管理</a>
+                                            <a href="{% url 'hosts:node_detail' node.id %}"
+                                               class="btn btn-primary btn-xs"><i class="fa fa-cogs"></i> 管理</a>
+                                        {% else %}
+                                            <a class="btn btn-primary btn-xs" disabled="disabled"><i
+                                                    class="fa fa-cogs"></i> 管理</a>
                                         {% endif %}
-                                        <a class="btn btn-primary btn-xs"><i class="fa fa-user"> </i>编辑</a>
+                                        <a href="{% url 'hosts:node_edit' node.id %}" class="btn btn-info btn-xs"><i
+                                                class="fa fa-edit"> </i> 编辑</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                {% endfor %}
-            {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
         </div>
     </div>
 {% endblock %}

@@ -1105,8 +1105,8 @@ legend {
 .demo-placeholder {
     height: 280px
 }
-.profile_details:nth-child(3n) {
-    clear: both
+.profile_details {
+
 }
 .profile_details .profile_view {
     display: inline-block;
@@ -1127,7 +1127,7 @@ legend {
     border-top: 1px solid #E6E9ED
 }
 .profile_details .profile_view .left {
-    margin-top: 20px
+    margin-top: 10px
 }
 .profile_details .profile_view .left p {
     margin-bottom: 3px
