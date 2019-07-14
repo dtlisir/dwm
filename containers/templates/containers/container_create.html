@@ -4,7 +4,7 @@
     <div class="right_col" role="main">
         <div class="page-title">
             <div class="title_left">
-                <h4>容器管理</h4>
+                <h3>容器管理</h3>
             </div>
         </div>
         <div class="clearfix"></div>
@@ -12,7 +12,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h5>创建容器</h5>
+                        <h2>创建容器</h2>
                         <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             </li>
@@ -31,9 +31,10 @@
                               class="form-horizontal form-label-left">
                             {% csrf_token %}
                             <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="c_name">名称</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="c_name">容器名称</label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input type="text" name="node_name" class="form-control col-md-7 col-xs-12">
+                                    <input type="text" id="c_name" name="c_name" placeholder="名称可选"
+                                           class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -41,73 +42,41 @@
                                     <span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input type="text" name="node_url" placeholder=""
-                                           class="form-control col-md-7 col-xs-12">
-                                </div>
-                            </div>
-
-
-                            <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_ip">端口映射
-                                </label>
-                                <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                                    <input type="text" name="node_url" placeholder=""
-                                           class="col-md-5 col-xs-12">aa
-                                    <input type="text" name="node_url" placeholder=""
-                                           class="col-md-5 col-xs-12">
+                                    <input type="text" id="c_image" name="c_image" placeholder="格式<名称:版本>"
+                                           class="form-control" style="font-weight: bold;">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_ip">端口映射
-                                </label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="image_list"></label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input type="text" name="node_ip"
-                                           class="form-control col-md-7 col-xs-12">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_ip">重启策略
-                                </label>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input type="text" name="node_ip"
-                                           class="form-control col-md-7 col-xs-12">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_group">启动命令
-                                </label>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <select name="group_id" class="form-control col-md-7 col-xs-12">
-                                        <option style='display: none'></option>
+                                    <select id="image_list" name="image_list"
+                                            class="image_select form-control">
+                                        <option style="display: none;"></option>
+                                        {% for image in images %}
+                                            <option value="{{ image }}">{{ image }}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_comment">卷映射</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="c_port">映射端口</label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <textarea name="node_comment" class="form-control" rows="3"></textarea>
+                                    <input id="c_port" type="text" name="c_port" class="tags form-control"
+                                           value="80:80"/>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="node_ip">网络
-                                </label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="c_volume">卷映射</label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input type="text" name="node_ip"
-                                           class="form-control col-md-7 col-xs-12">
+                                    <input id="c_volume" type="text" name="c_volume" class="tags form-control"
+                                           value="/data:/data"/>
                                 </div>
                             </div>
                             <div class="ln_solid"></div>
                             <div class="form-group">
                                 <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                                    <button type="submit" class="btn btn-success">提交</button>
-                                    <button class="btn btn-primary" type="reset">重置</button>
-
-                                </div>
-                            </div>
-                            <br>
-                            <div class="form-group">
-                                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                                    <p style="font-size: 18px; color: #B94A48">{{ error }}</p>
+                                    <button id="run_btn" type="button" class="btn btn-md btn-primary">创建</button>
+                                    <span id="run_info"></span>
                                 </div>
                             </div>
                         </form>
@@ -117,3 +86,23 @@
         </div>
     </div>
 {% endblock content %}
+
+{% block custom_js %}
+    <script>
+        $(function () {
+            $('.image_select').select2({
+                placeholder: '可从列表选择镜像',
+            }).change(function () {
+                $('#c_image').val($(this).val());
+            });
+            $('#c_port').tagsInput({
+                width: 'auto',
+                defaultText: '添加',
+            });
+            $('#c_volume').tagsInput({
+                width: 'auto',
+                defaultText: '添加',
+            });
+        });
+    </script>
+{% endblock custom_js %}

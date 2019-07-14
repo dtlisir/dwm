@@ -31,7 +31,7 @@
                                 <button id="start_btn" class="btn btn-sm btn-success" type="button">启动</button>
                                 <button id="stop_btn" class="btn btn-sm btn-danger" type="button">停止</button>
                                 <button id="restart_btn" class="btn btn-sm btn-warning" type="button">重启</button>
-                                <button id="pause_btn" class="btn btn-sm btn-warning" type="button">暂停</button>
+                                <button id="pause_btn" class="btn btn-sm btn-info" type="button">暂停</button>
                             </div>
                         </div>
                         <br>
@@ -111,8 +111,9 @@
                 $('#loading').css('display', 'block');
                 $.post(site_url + 'containers/post_container_start/',
                     {
-                        'node_url': {{ data.node_url }},
-                        'c_id': {{ data.id }},
+                        'node_url': '{{ data.node_url }}',
+                        'c_id': '{{ data.id }}',
+                        'c_name': '{{ data.name }}',
                     },
                     function (data) {
                         $('#loading').css('display', 'none');
@@ -123,19 +124,112 @@
                                 confirmButtonText: '确定',
                                 closeOnConfirm: false,
                             }, function () {
-                                window.location = '{% url 'hosts:node_list' %}';
+                                window.location.reload();
                             });
                         } else {
-                            _html = '<span style="color: #D9534F;font-weight: bold;">' + data.message + '</span>';
-                            $('#add_node').html(_html);
+                            swal({
+                                title: data.message,
+                                type: 'error',
+                                confirmButtonText: '确定',
+                                closeOnConfirm: false,
+                            }, function () {
+                                window.location.reload();
+                            });
                         }
                     }, 'json')
             });
             $('#stop_btn').click(function () {
-
+                $('#loading').css('display', 'block');
+                $.post(site_url + 'containers/post_container_stop/',
+                    {
+                        'node_url': '{{ data.node_url }}',
+                        'c_id': '{{ data.id }}',
+                        'c_name': '{{ data.name }}',
+                    },
+                    function (data) {
+                        $('#loading').css('display', 'none');
+                        if (data.result) {
+                            swal({
+                                title: data.message,
+                                type: 'success',
+                                confirmButtonText: '确定',
+                                closeOnConfirm: false,
+                            }, function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            swal({
+                                title: data.message,
+                                type: 'error',
+                                confirmButtonText: '确定',
+                                closeOnConfirm: false,
+                            }, function () {
+                                window.location.reload();
+                            });
+                        }
+                    }, 'json')
             });
             $('#restart_btn').click(function () {
-
+                $('#loading').css('display', 'block');
+                $.post(site_url + 'containers/post_container_restart/',
+                    {
+                        'node_url': '{{ data.node_url }}',
+                        'c_id': '{{ data.id }}',
+                        'c_name': '{{ data.name }}',
+                    },
+                    function (data) {
+                        $('#loading').css('display', 'none');
+                        if (data.result) {
+                            swal({
+                                title: data.message,
+                                type: 'success',
+                                confirmButtonText: '确定',
+                                closeOnConfirm: false,
+                            }, function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            swal({
+                                title: data.message,
+                                type: 'error',
+                                confirmButtonText: '确定',
+                                closeOnConfirm: false,
+                            }, function () {
+                                window.location.reload();
+                            });
+                        }
+                    }, 'json')
+            });
+            $('#pause_btn').click(function () {
+                $('#loading').css('display', 'block');
+                $.post(site_url + 'containers/post_container_pause/',
+                    {
+                        'node_url': '{{ data.node_url }}',
+                        'c_id': '{{ data.id }}',
+                        'c_name': '{{ data.name }}',
+                    },
+                    function (data) {
+                        $('#loading').css('display', 'none');
+                        if (data.result) {
+                            swal({
+                                title: data.message,
+                                type: 'success',
+                                confirmButtonText: '确定',
+                                closeOnConfirm: false,
+                            }, function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            swal({
+                                title: data.message,
+                                type: 'error',
+                                confirmButtonText: '确定',
+                                closeOnConfirm: false,
+                            }, function () {
+                                window.location.reload();
+                            });
+                        }
+                    }, 'json')
             });
         });
     </script>

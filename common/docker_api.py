@@ -41,6 +41,62 @@ def get_container_detail(url, id):
     return resp
 
 
+def start_container(url, id):
+    try:
+        client = docker.DockerClient(base_url=url)
+        try:
+            container = client.containers.get(id)
+            container.start()
+            resp = {'result': True}
+        finally:
+            client.close()
+    except Exception as e:
+        resp = {'result': False, 'message': str(e)}
+    return resp
+
+
+def stop_container(url, id):
+    try:
+        client = docker.DockerClient(base_url=url)
+        try:
+            container = client.containers.get(id)
+            container.stop()
+            resp = {'result': True}
+        finally:
+            client.close()
+    except Exception as e:
+        resp = {'result': False, 'message': str(e)}
+    return resp
+
+
+def restart_container(url, id):
+    try:
+        client = docker.DockerClient(base_url=url)
+        try:
+            container = client.containers.get(id)
+            container.restart()
+            resp = {'result': True}
+        finally:
+            client.close()
+    except Exception as e:
+        resp = {'result': False, 'message': str(e)}
+    return resp
+
+
+def pause_container(url, id):
+    try:
+        client = docker.DockerClient(base_url=url)
+        try:
+            container = client.containers.get(id)
+            container.pause()
+            resp = {'result': True}
+        finally:
+            client.close()
+    except Exception as e:
+        resp = {'result': False, 'message': str(e)}
+    return resp
+
+
 def run_container(url, image, **kwargs):
     try:
         client = docker.DockerClient(base_url=url)
@@ -56,9 +112,12 @@ def run_container(url, image, **kwargs):
 
 def get_images(url):
     try:
-        with docker.DockerClient(base_url=url) as client:
+        client = docker.DockerClient(base_url=url)
+        try:
             data = client.images.list()
             resp = {'result': True, 'data': data}
+        finally:
+            client.close()
     except Exception as e:
         resp = {'result': False, 'message': str(e)}
     return resp

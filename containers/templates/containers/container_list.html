@@ -64,7 +64,7 @@
                         targets: 4,
                         orderable: false,
                         createdCell: function (td, cellData, rowData) {
-                            var detail_btn = '<a href="{% url "containers:container_detail" id=99999999 %}" class="btn btn-xs btn-primary">详情</a>'
+                            var detail_btn = '<a href="{% url "containers:container_detail" id=99999999 %}" class="btn btn-xs btn-info">详情</a>'
                                 .replace('99999999', cellData);
                             var del_btn = '<span class="btn btn-xs btn-danger btn_del_group" data-gid="99999999">删除</span>'
                                 .replace('99999999', cellData);
