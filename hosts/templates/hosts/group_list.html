@@ -62,7 +62,7 @@
                     },
                     {
                         targets: 5, createdCell: function (td, cellData, rowData) {
-                            var edit_btn = '<a href="{% url "hosts:group_edit" pk=99999999 %}" class="btn btn-xs btn-info">编辑</a>'
+                            var edit_btn = '<a href="{% url "hosts:group_edit" pk=99999999 %}" class="btn btn-xs btn-warning">编辑</a>'
                                 .replace('99999999', cellData);
                             var del_btn = '<span class="btn btn-xs btn-danger btn_del_group" data-gid="99999999">删除</span>'
                                 .replace('99999999', cellData);

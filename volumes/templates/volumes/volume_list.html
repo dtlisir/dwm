@@ -4,7 +4,7 @@
     <div class="right_col" role="main">
         <div class="page-title">
             <div class="title_left">
-                <h4>卷管理</h4>
+                <h3>卷管理</h3>
             </div>
         </div>
         <div class="clearfix"></div>
@@ -12,7 +12,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h5>卷列表</h5>
+                        <h2>卷列表</h2>
                         <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             </li>
@@ -33,18 +33,11 @@
                                 <th>驱动</th>
                                 <th>挂在点</th>
                                 <th>创建时间</th>
-                                <th>动作</th>
                             </tr>
                             </thead>
                             <tbody>
                             </tbody>
                         </table>
-                        <a href="{% url 'containers:container_create' %}" class="btn btn-sm btn-primary">创建容器</a>
-                        <select class="form-control" id="node_list">
-                            {% for node in nodes %}
-                                <option value="{{ node.id }}">{{ node.name }}</option>
-                            {% endfor %}
-                        </select>
                     </div>
                 </div>
             </div>
@@ -55,33 +48,25 @@
 {% block custom_js %}
     <script>
         $(function () {
-            var node_id = $('#node_list').val();
-            var table = $('#volume_list_table').dataTable({
-                dom: 'tip',
+            var table = $('#volume_list_table').DataTable({
                 columnDefs: [
                     {
                         targets: 2, createdCell: function (td, cellData) {
-                            var innerHtml = cellData.length > 30 ? cellData.substring(0, 30) + '...' : cellData;
+                            var innerHtml = cellData.length > 60 ? cellData.substring(0, 60) + '...' : cellData;
                             $(td).html('<a href="javascript:void(0);" data-toggle="tooltip" title="' + cellData + '">' + innerHtml + '</a>');
                         }
-                    },
-                    {#{#}
-                    {#    targets: 4,#}
-                    {#    createdCell: function (td, cellData, rowData) {#}
-                    {#        var detail_btn = '<span class="btn btn-xs btn-primary">详情</span>';#}
-                    {#        var del_btn = '<span class="btn btn-xs btn-danger btn_del_group" data-gid="99999999">删除</span>'#}
-                    {#            .replace('99999999', cellData);#}
-                    {#        $(td).html(detail_btn + del_btn);#}
-                    {#    }#}
-                    {# }#}
+                    }
                 ],
                 ajax: {
                     url: site_url + 'volumes/get_volume_list/',
-                    data: {'node_id': node_id},
+                    type: 'post',
+                    data: {
+                        'node_url': '{{ node.url }}',
+                    }
                 },
                 columns: [
                     {data: "short_id"}, {data: "driver"}, {data: "mountpoint"},
-                    {data: "created"}, {data: "short_id"}
+                    {data: "created"}
                 ],
                 ordering: false,
                 language: {
@@ -117,7 +102,7 @@
                     closeOnCancel: true
                 }, function () {
                     $.ajax({
-                        url: site_url + 'images/image_del/',
+                        url: site_url + 'volumes/volume_del/',
                         type: 'get',
                         dataType: 'json',
                         data: {"id": gid},

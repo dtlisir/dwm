@@ -1,17 +1,16 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from hosts.models import CurrNode
+from hosts.models import HostNode
 from common.docker_api import get_containers, get_container_detail, get_images
 from common.docker_api import start_container, stop_container, restart_container, pause_container
+from common.docker_api import run_container, remove_container
 from common.utils import handle_time
 from syslogs.models import Log
 
 
-def container_list(request):
-    curr_node = CurrNode.objects.all()
-    if not curr_node:
-        return render(request, 'home/select_node.html')
-    return render(request, 'containers/container_list.html', {'node': curr_node[0]})
+def container_list(request, pk):
+    node = HostNode.objects.get(id=pk)
+    return render(request, 'containers/container_list.html', {'node': node})
 
 
 def get_container_list(request):
@@ -34,26 +33,75 @@ def get_container_list(request):
         return JsonResponse({'data': []})
 
 
-def container_create(request):
+def container_create(request, pk):
     images = []
-    curr_node = CurrNode.objects.all()
-    if not curr_node:
-        return render(request, 'home/select_node.html')
-    node_url = curr_node[0].node_url
+    node = HostNode.objects.get(id=pk)
+    node_url = node.url
     resp = get_images(node_url)
     if resp['result']:
         resp_data = resp['data']
         for r_data in resp_data:
             images.append(r_data.tags[0])
-    return render(request, 'containers/container_create.html', {'images': images})
+    return render(request, 'containers/container_create.html', {'node': node, 'images': images})
 
 
-def container_detail(request, id):
-    curr_node = CurrNode.objects.all()
-    if not curr_node:
-        return render(request, 'home/select_node.html')
-    node_name = curr_node[0].node_name
-    node_url = curr_node[0].node_url
+def post_container_create(request):
+    resp = {}
+    user = request.user.username
+    try:
+
+        node_url = request.POST.get('node_url')
+        c_image = request.POST.get('image')
+        kwargs = {}
+        c_name = request.POST.get('name', '')
+        if c_name:
+            kwargs['name'] = c_name
+        c_port = request.POST.get('port', '')
+        if c_port:
+            ports = {}
+            port_list = c_port.split(',')
+            for port in port_list:
+                key = '%s/tcp' % (port.split(':')[0])
+                ports[key] = port.split(':')[1]
+            print(ports)
+            kwargs['ports'] = ports
+        c_volume = request.POST.get('volume', '')
+        if c_volume:
+            volumes = {}
+            volume_list = c_volume.split(',')
+            for volume in volume_list:
+                key = volume.split(':')[0]
+                value = {'mode': 'rw'}
+                value['bind']=volume.split(':')[1]
+                volumes[key] = value
+                print(volumes)
+            kwargs['volumes'] = volumes
+        resp = run_container(node_url, c_image, **kwargs)
+        if resp['result']:
+            data = resp['data']
+            Log.objects.create(
+                user=user,
+                type='CONTAINER',
+                action='CREATE',
+                state=True,
+                content='容器%s创建成功' % (data.name)
+        )
+        return JsonResponse({'result': True, 'message': '容器创建成功'})
+    except Exception as e:
+        Log.objects.create(
+            user=user,
+            type='CONTAINER',
+            action='CREATE',
+            state=False,
+            content='容器%s创建失败，原因：%s' % (resp['data'].name, resp['message'])
+        )
+        return JsonResponse({'result': False, 'message': '容器创建失败，请查看操作日志'})
+
+
+def container_detail(request, pk, id):
+    node = HostNode.objects.get(id=pk)
+    node_name = node.name
+    node_url = node.url
     data = {}
     try:
         resp = get_container_detail(node_url, id)
@@ -69,9 +117,9 @@ def container_detail(request, id):
                 'node_name': node_name,
                 'node_url': node_url,
             }
-        return render(request, 'containers/container_detail.html', {'data': data})
+        return render(request, 'containers/container_detail.html', {'node': node, 'data': data})
     except Exception as e:
-        return render(request, 'containers/container_detail.html', {'data': {}})
+        return render(request, 'containers/container_detail.html', {'node': node, 'data': {}})
 
 
 def post_container_start(request):
@@ -176,3 +224,28 @@ def post_container_pause(request):
             content='容器[%s]暂停失败，原因：%s' % (c_name, resp['message'])
         )
         return JsonResponse({'result': False, 'message': '容器暂停失败，请查看操作日志'})
+
+
+def post_container_remove(request):
+    node_url = request.POST.get('node_url')
+    c_id = request.POST.get('c_id')
+    user = request.user.username
+    resp = remove_container(node_url, c_id)
+    if resp['result']:
+        Log.objects.create(
+            user=user,
+            type='CONTAINER',
+            action='REMOVE',
+            state=True,
+            content='容器删除成功'
+        )
+        return JsonResponse({'result': True, 'message': '容器删除成功'})
+    else:
+        Log.objects.create(
+            user=user,
+            type='CONTAINER',
+            action='REMOVE',
+            state=False,
+            content='容器删除失败，原因：%s' % (resp['message'])
+        )
+        return JsonResponse({'result': False, 'message': '容器删除失败，请查看操作日志'})

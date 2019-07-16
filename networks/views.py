@@ -4,18 +4,15 @@ from hosts.models import HostNode
 from common.docker_api import get_networks
 
 
-def network_list(request):
-    nodes = HostNode.objects.values('id', 'name')
-    return render(request, 'networks/network_list.html', {'nodes': nodes})
+def network_list(request, pk):
+    node = HostNode.objects.get(id=pk)
+    return render(request, 'networks/network_list.html', {'node': node})
 
 
 def get_network_list(request):
-    node_id = int(request.GET.get('node_id'))
-
-    resp_data = []
     try:
-        node = HostNode.objects.get(id=node_id)
-        url = node.url
+        resp_data = []
+        url = request.POST.get('node_url')
         resp = get_networks(url)
         if resp['result']:
             for data in resp['data']:
@@ -28,6 +25,7 @@ def get_network_list(request):
                     'created': data.attrs['Created'][:-16],
                 }
                 resp_data.append(v_data)
+        return JsonResponse({'data': resp_data})
     except Exception as e:
-        pass
-    return JsonResponse({'data': resp_data})
+        return JsonResponse({'data': []})
+

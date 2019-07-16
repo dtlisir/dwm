@@ -4,7 +4,7 @@
     <div class="right_col" role="main">
         <div class="page-title">
             <div class="title_left">
-                <h4>容器管理</h4>
+                <h3>容器管理</h3>
             </div>
         </div>
         <div class="clearfix"></div>
@@ -12,7 +12,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h5>网络列表</h5>
+                        <h2>网络列表</h2>
                         <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             </li>
@@ -40,12 +40,6 @@
                             <tbody>
                             </tbody>
                         </table>
-                        <a href="{% url 'containers:container_create' %}" class="btn btn-sm btn-primary">创建容器</a>
-                        <select class="form-control" id="node_list">
-                            {% for node in nodes %}
-                                <option value="{{ node.id }}">{{ node.name }}</option>
-                            {% endfor %}
-                        </select>
                     </div>
                 </div>
             </div>
@@ -56,9 +50,7 @@
 {% block custom_js %}
     <script>
         $(function () {
-            var node_id = $('#node_list').val();
-            var table = $('#network_list_table').dataTable({
-                dom: 'tip',
+            var table = $('#network_list_table').DataTable({
                 columnDefs: [
                     {
                         targets: 2, createdCell: function (td, cellData, rowData) {
@@ -69,7 +61,10 @@
                 ],
                 ajax: {
                     url: site_url + 'networks/get_network_list/',
-                    data: {'node_id': node_id},
+                    type: 'post',
+                    data: {
+                        'node_url': '{{ node.url }}',
+                    }
                 },
                 columns: [
                     {data: "short_id"}, {data: "scope"}, {data: "driver"},

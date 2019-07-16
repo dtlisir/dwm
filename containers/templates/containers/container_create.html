@@ -81,6 +81,10 @@
                             </div>
                         </form>
                     </div>
+                    <div id="loading"
+                         style="display: none;position: absolute;z-index: 10000;width: 100%;top: 0;height: 550px;text-align: center;padding-top: 200px;">
+                        <i class="fa fa-spinner fa-pulse fa-4x"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -102,6 +106,57 @@
             $('#c_volume').tagsInput({
                 width: 'auto',
                 defaultText: '添加',
+            });
+            $('#run_btn').click(function () {
+                var _html = '';
+                var post_data = {};
+                var c_image = $('#c_image').val();
+                if (c_image === '') {
+                    _html = '<span style="color: #D9534F;font-weight: bold;">镜像不能为空</span>';
+                    $('#run_info').html(_html);
+                    return
+                }
+                ;
+                if (c_image.indexOf(':') === -1) {
+                    _html = '<span style="color: #D9534F;font-weight: bold;">镜像格式不正确</span>';
+                    $('#run_info').html(_html);
+                    return
+                }
+                ;
+                post_data.image = c_image;
+                var c_name = $('#c_name').val();
+                if (c_name !== '') {
+                    post_data.name = c_name;
+                }
+                ;
+                var c_port = $('#c_port').val();
+                if (c_port !== '') {
+                    post_data.port = c_port;
+                }
+                ;
+                var c_volume = $('#c_volume').val();
+                if (c_volume !== '') {
+                    post_data.volume = c_volume;
+                }
+                post_data.node_url = '{{ node.url }}';
+                $('#loading').css('display', 'block');
+                $.post(site_url + 'containers/post_container_create/', post_data,
+                    function (data) {
+                        $('#loading').css('display', 'none');
+                        if (data.result) {
+                            swal({
+                                title: data.message,
+                                type: 'success',
+                                confirmButtonText: '确定',
+                                closeOnConfirm: false,
+                            }, function () {
+                                window.location = '{% url 'containers:container_list' %}';
+                            });
+                        } else {
+                            _html = '<span style="color: #D9534F;font-weight: bold;">' + data.message + '</span>';
+                            $('#run_info').html(_html);
+                        }
+                    }, 'json');
             });
         });
     </script>

@@ -53,7 +53,6 @@ class HostNode(models.Model):
         return self.name
 
     class Meta:
-        ordering = ['name']
         verbose_name = '主机'
 
     def to_dict(self):
@@ -65,14 +64,5 @@ class HostNode(models.Model):
             'url': self.url,
             'group': self.group.name if self.group else '',
         }
-
-
-class CurrNode(models.Model):
-    node_id = models.IntegerField(default=0, blank=True, null=True, verbose_name='主机ID')
-    node_name = models.CharField(max_length=64, blank=True, null=True, verbose_name='主机名称')
-    node_url = models.CharField(max_length=128, blank=True, null=True, verbose_name='主机URL')
-
-    class Meta:
-        verbose_name = '当前主机'
 
 

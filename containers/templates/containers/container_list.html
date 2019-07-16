@@ -40,7 +40,7 @@
                             </tbody>
                         </table>
                         <div class="clearfix"></div>
-                        <a href="{% url 'containers:container_create' %}" class="btn btn-sm btn-primary">创建容器</a>
+                        <a href="{% url 'containers:container_create' node.id %}" class="btn btn-sm btn-primary">创建容器</a>
                     </div>
                 </div>
             </div>
@@ -51,6 +51,7 @@
 {% block custom_js %}
     <script>
         $(function () {
+            var node_id = {{ node.id }}
             var table = $('#container_list_table').DataTable({
                 columnDefs: [
                     {
@@ -64,9 +65,9 @@
                         targets: 4,
                         orderable: false,
                         createdCell: function (td, cellData, rowData) {
-                            var detail_btn = '<a href="{% url "containers:container_detail" id=99999999 %}" class="btn btn-xs btn-info">详情</a>'
-                                .replace('99999999', cellData);
-                            var del_btn = '<span class="btn btn-xs btn-danger btn_del_group" data-gid="99999999">删除</span>'
+                            var detail_btn = '<a href="{% url "containers:container_detail" pk=88888888 id=99999999 %}" class="btn btn-xs btn-info">详情</a>'
+                                .replace('88888888', node_id).replace('99999999', cellData);
+                            var del_btn = '<span class="btn btn-xs btn-danger btn_del_group" data-cid="99999999">删除</span>'
                                 .replace('99999999', cellData);
                             $(td).html(detail_btn + del_btn);
                         }
@@ -76,14 +77,13 @@
                     url: site_url + 'containers/get_container_list/',
                     type: 'post',
                     data: {
-                        'node_url': '{{ node.node_url }}',
+                        'node_url': '{{ node.url }}',
                     }
                 },
                 columns: [
                     {data: "name"}, {data: "status"}, {data: "image"},
                     {data: "created"}, {data: "c_id"},
                 ],
-                order: [],
                 language: {
                     search: "搜索",
                     lengthMenu: "每页  _MENU_",
@@ -100,6 +100,40 @@
                     },
                 },
                 lengthMenu: [[5, 10, 15, -1], [5, 10, 15, "All"]]
+            }).on('click', '.btn_del_group', function () {
+                var $this = $(this);
+                var cid = $this.data('cid');
+                swal({
+                    title: '是否删除',
+                    type: "warning",
+                    text: "",
+                    showCancelButton: true,
+                    cancelButtonText: '取 消',
+                    cancelButtonColor: '#b9b9b9',
+                    showConfirmButton: true,
+                    confirmButtonColor: "#dd6b55",
+                    confirmButtonText: '确 认',
+                    closeOnConfirm: false,
+                    closeOnCancel: true
+                }, function () {
+                    $.ajax({
+                        url: site_url + 'containers/post_container_remove/',
+                        type: 'post',
+                        dataType: 'json',
+                        data: {
+                            'node_url': '{{ node.url }}',
+                            'c_id': cid,
+                        },
+                        success: function (res) {
+                            if (res.result) {
+                                swal('删除成功', '', 'success');
+                                $('#container_list_table').DataTable().ajax.reload();
+                            } else {
+                                swal('删除失败', '', 'error');
+                            }
+                        }
+                    });
+                });
             });
         });
     </script>

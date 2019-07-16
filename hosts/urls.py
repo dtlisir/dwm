@@ -13,7 +13,6 @@ urlpatterns = (
     url(r'^post_edit_node/$', views.post_edit_node, name='post_edit_node'),
     url(r'^node_del/$', views.node_del, name='node_del'),
     url(r'^node_detail/(?P<pk>[0-9]+)/$', views.node_detail, name='node_detail'),
-    url(r'^curr_detail/$', views.curr_detail, name='curr_detail'),
 
     url(r'^group_list/$', views.group_list, name='group_list'),
     url(r'^get_group_list/$', views.get_group_list, name='get_group_list'),

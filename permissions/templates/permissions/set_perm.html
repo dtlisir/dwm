@@ -93,12 +93,12 @@
                  }
                 var node_id = n_id;
                 var user_list = $('.user_select').select2('val');
-                console.log(user_list);
+                user_str = user_list.join(',');
+                console.log(user_str);
                 $.ajax({
                     url: site_url + 'permissions/post_perm_set/',
-                    data: {'node_id': node_id, 'user_list': user_list},
+                    data: {'node_id': node_id, 'user_str': user_str},
                     type: 'post',
-                    traditional: true,
                     success: function (data) {
                         if (data.result) {
                             swal({
@@ -107,14 +107,14 @@
                                 confirmButtonText: '确定',
                                 closeOnConfirm : false,
                             },function () {
-                                window.location = '{% url 'home:index' %}';
+                                window.location.reload();
                             });
                         } else {
                             _html = '<span style="color: #D9534F;font-weight: bold;">' + data.message + '</span>';
                             $('#perm_info').html(_html);
                         }
                     }
-                });
+                 });
             });
         });
     </script>

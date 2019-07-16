@@ -40,6 +40,8 @@
                             <tbody>
                             </tbody>
                         </table>
+                        <div class="clearfix"></div>
+                        <button id="clear_btn" class="btn btn-sm btn-warning">清空日志</button>
                     </div>
                 </div>
             </div>
@@ -71,7 +73,7 @@
                 },
                 columns: [
                     {data: "user"}, {data: "type"}, {data: "action"},
-                    {data: "state"}, {data: "content"},  {data: "time_ops"}
+                    {data: "state"}, {data: "content"}, {data: "time_ops"}
                 ],
                 language: {
                     search: "搜索",
@@ -89,6 +91,35 @@
                     }
                 },
                 lengthMenu: [[5, 10, 15, -1], [5, 10, 15, "All"]]
+            });
+        });
+        $('#clear_btn').click(function () {
+            swal({
+                title: '是否删除',
+                type: "warning",
+                text: "",
+                showCancelButton: true,
+                cancelButtonText: '取 消',
+                cancelButtonColor: '#b9b9b9',
+                showConfirmButton: true,
+                confirmButtonColor: "#dd6b55",
+                confirmButtonText: '确 认',
+                closeOnConfirm: false,
+                closeOnCancel: true
+            }, function () {
+                $.ajax({
+                    url: site_url + 'syslogs/get_log_clear/',
+                    type: 'get',
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.result) {
+                            swal('删除成功', '', 'success');
+                            $('#log_list_table').DataTable().ajax.reload();
+                        } else {
+                            swal('删除失败', '', 'error');
+                        }
+                    }
+                });
             });
         });
     </script>

@@ -4,7 +4,7 @@
     <div class="right_col" role="main">
         <div class="page-title">
             <div class="title_left">
-                <h4>镜像管理</h4>
+                <h3>镜像管理</h3>
             </div>
         </div>
         <div class="clearfix"></div>
@@ -12,7 +12,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h5>镜像列表</h5>
+                        <h2>镜像列表</h2>
                         <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             </li>
@@ -33,19 +33,11 @@
                                 <th>标签</th>
                                 <th>大小</th>
                                 <th>创建时间</th>
-                                <th>动作</th>
                             </tr>
                             </thead>
                             <tbody>
                             </tbody>
                         </table>
-                        <div class="clearfix"></div>
-                        <a href="{% url 'containers:container_create' %}" class="btn btn-sm btn-primary">创建容器</a>
-                        <select class="form-control" id="node_list">
-                            {% for node in nodes %}
-                                <option value="{{ node.id }}">{{ node.name }}</option>
-                            {% endfor %}
-                        </select>
                     </div>
                 </div>
             </div>
@@ -56,42 +48,29 @@
 {% block custom_js %}
     <script>
         $(function () {
-            var node_id = $('#node_list').val();
             var table = $('#image_list_table').DataTable({
-                dom: 'tip',
                 columnDefs: [
                     {
                         targets: 1, createdCell: function (td, cellData, rowData) {
-                            var status_btn = '<span class="label label-info">' + cellData + '</span>';
+                            var status_btn = '<span class="label label-success">' + cellData + '</span>';
                             $(td).html(status_btn);
                         }
                     },
-                    {
-                        targets: 4,
-                        orderable: false,
-                        createdCell: function (td, cellData, rowData) {
-                            var detail_btn = '<span class="btn btn-xs btn-primary">详情</span>';
-                            var del_btn = '<span class="btn btn-xs btn-danger btn_del_group" data-gid="99999999">删除</span>'
-                                .replace('99999999', cellData);
-                            $(td).html(detail_btn + del_btn);
-                        }
-                    }
                 ],
                 ajax: {
                     url: site_url + 'images/get_image_list/',
-                    data: {'node_id': node_id},
+                    type: 'post',
+                    data: {
+                        'node_url': '{{ node.url }}',
+                    },
                 },
                 columns: [
                     {data: "short_id"}, {data: "tag"}, {data: "size"},
-                    {data: "created"}, {data: "i_id"}
+                    {data: "created"}
                 ],
-                select: {
-                    style: 'multi',
-                    selector: 'td:first-child'
-                },
-                order: [],
                 language: {
                     search: "搜索",
+                    lengthMenu: "每页  _MENU_",
                     info: "显示第 _START_ 至 _END_ 项结果; 总共 _TOTAL_ 项",
                     infoFiltered: "",
                     infoEmpty: "",
@@ -104,39 +83,7 @@
                         last: "»"
                     }
                 },
-                pageLength: 10,
-            });
-            table.on('click', '.btn_del_group', function () {
-                var $this = $(this);
-                var gid = $this.data('gid');
-                swal({
-                    title: '是否删除',
-                    type: "warning",
-                    text: "",
-                    showCancelButton: true,
-                    cancelButtonText: '取 消',
-                    cancelButtonColor: '#b9b9b9',
-                    showConfirmButton: true,
-                    confirmButtonColor: "#dd6b55",
-                    confirmButtonText: '确 认',
-                    closeOnConfirm: false,
-                    closeOnCancel: true
-                }, function () {
-                    $.ajax({
-                        url: site_url + 'images/image_del/',
-                        type: 'get',
-                        dataType: 'json',
-                        data: {"id": gid},
-                        success: function (res) {
-                            if (res.result) {
-                                swal('删除成功', '', 'success');
-                                $('#image_list_table').DataTable().ajax.reload();
-                            } else {
-                                swal('删除失败', '', 'error');
-                            }
-                        }
-                    });
-                });
+                lengthMenu: [[5, 10, 15, -1], [5, 10, 15, "All"]]
             });
         });
     </script>

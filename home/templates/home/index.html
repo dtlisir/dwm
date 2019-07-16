@@ -38,21 +38,17 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-8 col-sm-8 col-xs-12">
+                <div class="col-md-6 col-sm-6 col-xs-12">
                     <div class="x_panel">
                         <div class="x_content">
-
-                            <div id="ci_top5" style="height:280px;"></div>
-
+                            <div id="ops_echart" style="height:320px;"></div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 col-sm-4 col-xs-12">
+                <div class="col-md-6 col-sm-6 col-xs-12">
                     <div class="x_panel">
                         <div class="x_content">
-
-                            <div id="rsp_echart" style="height:280px;"></div>
-
+                            <div id="rsp_echart" style="height:320px;"></div>
                         </div>
                     </div>
                 </div>
@@ -330,43 +326,66 @@
                 fontFamily: 'Arial, Verdana, sans-serif'
             }
         };
-        var echartBar = echarts.init(document.getElementById('ci_top5'), theme);
-
-        echartBar.setOption({
+        var echartPieCollapse = echarts.init(document.getElementById('ops_echart'), theme);
+        echartPieCollapse.setOption({
             title: {
-                text: '容器数量TOP5',
+                text: '容器操作汇总',
             },
             tooltip: {
-                trigger: 'axis'
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
             },
             legend: {
                 x: 'center',
                 y: 'bottom',
-                data: ['容器', '镜像']
+                data: ['创建数', '启动数', '停止数', '重启数', '删除数']
             },
             toolbox: {
-                show: false
+                show: false,
+                feature: {
+                    magicType: {
+                        show: true,
+                        type: ['pie', 'funnel']
+                    },
+                    restore: {
+                        show: true,
+                        title: "Restore"
+                    },
+                    saveAsImage: {
+                        show: true,
+                        title: "Save Image"
+                    }
+                }
             },
-            calculable: false,
-            xAxis: [{
-                type: 'category',
-                data: {{ ip_list|safe }}
-            }],
-            yAxis: [{
-                type: 'value'
-            }],
+            calculable: true,
             series: [{
-                name: '容器',
-                type: 'bar',
-                data: {{ c_count_list|safe }},
-            }, {
-                name: '镜像',
-                type: 'bar',
-                data: {{ i_count_list|safe }},
+                name: '容器操作',
+                type: 'pie',
+                radius: [25, 90],
+                center: ['50%', 170],
+                roseType: 'area',
+                x: '50%',
+                max: 40,
+                sort: 'ascending',
+                data: [{
+                    value: {{ c_create_count }},
+                    name: '创建数'
+                }, {
+                    value: {{ c_start_count }},
+                    name: '启动数'
+                }, {
+                    value: {{ c_stop_count }},
+                    name: '停止数'
+                }, {
+                    value: {{ c_restart_count }},
+                    name: '重启数'
+                }, {
+                    value: {{ c_remove_count }},
+                    name: '删除数'
+                }]
             }]
         });
         var echartDonut = echarts.init(document.getElementById('rsp_echart'), theme);
-
         echartDonut.setOption({
             title: {
                 text: '容器状态汇总',
@@ -407,7 +426,7 @@
                 }
             },
             series: [{
-                name: '总容器状态',
+                name: '容器状态',
                 type: 'pie',
                 radius: ['35%', '55%'],
                 itemStyle: {

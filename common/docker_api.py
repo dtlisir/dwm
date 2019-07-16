@@ -110,6 +110,20 @@ def run_container(url, image, **kwargs):
     return resp
 
 
+def remove_container(url, id):
+    try:
+        client = docker.DockerClient(base_url=url)
+        try:
+            container = client.containers.get(id)
+            container.remove()
+            resp = {'result': True}
+        finally:
+            client.close()
+    except Exception as e:
+        resp = {'result': False, 'message': str(e)}
+    return resp
+
+
 def get_images(url):
     try:
         client = docker.DockerClient(base_url=url)

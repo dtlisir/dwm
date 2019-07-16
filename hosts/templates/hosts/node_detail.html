@@ -27,11 +27,11 @@
                     </div>
                     <div class="x_content">
                         <br/>
-                        <a href="{% url 'containers:container_list' %}" class="btn btn-app">
+                        <a href="{% url 'containers:container_list' node.id %}" class="btn btn-app">
                             <span class="badge bg-blue-sky">{{ node.c_count|default:"0" }}</span>
                             <i class="fa fa-cubes"></i> 容器
                         </a>
-                        <a href="{% url 'images:image_list' %}" class="btn btn-app">
+                        <a href="{% url 'images:image_list' node.id %}" class="btn btn-app">
                             <span class="badge bg-orange">{{ node.i_count|default:"0" }}</span>
                             <i class="fa fa-window-restore"></i> 镜像
                         </a>

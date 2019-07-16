@@ -9,7 +9,7 @@ from syslogs.models import Log
 from common.docker_api import get_docker_info
 
 
-@periodic_task(run_every=crontab(minute='*/2', hour='*', day_of_week="*"))
+@periodic_task(run_every=crontab(minute='*/1', hour='*', day_of_week="*"))
 def check_node_data_periodic():
     try:
         nodes = HostNode.objects.all()
@@ -17,35 +17,29 @@ def check_node_data_periodic():
             resp = get_docker_info(node.url)
             if resp['result']:
                 data = resp['data']
-                node.os = data['OperatingSystem'],
-                node.os_arch = data['Architecture'],
-                node.cpu_count = data['NCPU'],
-                node.memory = data['MemTotal'],
-                node.active = True,
-                node.c_running = data['ContainersRunning'],
-                node.c_paused = data['ContainersPaused'],
-                node.c_stopped = data['ContainersStopped'],
-                node.d_version = data['ServerVersion'],
-                node.c_count = data['Containers'],
-                node.i_count = data['Images']
-                node.save()
+                HostNode.objects.filter(id=node.id).update(
+                    os=data['OperatingSystem'],
+                    os_arch=data['Architecture'],
+                    cpu_count=data['NCPU'],
+                    memory=data['MemTotal'],
+                    active=True,
+                    c_running=data['ContainersRunning'],
+                    c_paused=data['ContainersPaused'],
+                    c_stopped=data['ContainersStopped'],
+                    d_version=data['ServerVersion'],
+                    c_count=data['Containers'],
+                    i_count=data['Images']
+                )
             else:
-                node.active = False
-                node.save()
+                HostNode.objects.filter(id=node.id).update(active=False)
             time.sleep(1)
-        # Log.objects.create(
-        #     user='system',
-        #     type='HOST',
-        #     action='CHECK',
-        #     state=True,
-        #     content='主机巡检成功'
-        # )
     except Exception as e:
+        content = '主机巡检失败，原因：%s' % (str(e))
         Log.objects.create(
             user='system',
             type='HOST',
             action='CHECK',
             state=False,
-            content='主机巡检失败，原因：%s' % (str(e))
+            content=content
         )
 

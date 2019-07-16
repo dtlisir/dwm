@@ -4,17 +4,15 @@ from hosts.models import HostNode
 from common.utils import handle_size, handle_time
 from common.docker_api import get_images
 
-def image_list(request):
-    nodes = HostNode.objects.values('id', 'name')
-    return render(request, 'images/image_list.html', {'nodes': nodes})
+def image_list(request, pk):
+    node = HostNode.objects.get(id=pk)
+    return render(request, 'images/image_list.html', {'node': node})
 
 
 def get_image_list(request):
-    node_id = request.GET.get('node_id')
-    resp_data = []
     try:
-        node = HostNode.objects.get(id=node_id)
-        url = node.url
+        url = request.POST.get('node_url')
+        resp_data = []
         resp = get_images(url)
         if resp['result']:
             for data in resp['data']:
@@ -26,8 +24,7 @@ def get_image_list(request):
                     'i_id': data.id,
                 }
                 resp_data.append(i_data)
+        return JsonResponse({'data': resp_data})
     except Exception as e:
-        pass
-    return JsonResponse({'data': resp_data})
-
+        return JsonResponse({'data': []})
 

@@ -17,3 +17,11 @@ def get_ops_list(request):
     if logs:
         data = [log.to_dict() for log in logs]
     return JsonResponse({'data': data})
+
+
+def get_log_clear(request):
+    try:
+        Log.objects.all().delete()
+        return JsonResponse({'result': True})
+    except:
+        return JsonResponse({'result': False})

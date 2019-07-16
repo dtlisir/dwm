@@ -2,11 +2,10 @@
 from django.shortcuts import render, redirect
 from hosts.models import HostNode
 from blueapps.account.models import User
+from syslogs.models import Log
 from django.db.models.aggregates import Sum
 
 
-# 开发框架中通过中间件默认是需要登录态的，如有不需要登录的，可添加装饰器login_exempt
-# 装饰器引入 from blueapps.account.decorators import login_exempt
 def index(request):
     if not request.user.is_superuser:
         return redirect('home:index_user')
@@ -23,10 +22,11 @@ def index(request):
     c_paused_count = container_paused['totles']
     image_totle = nodes.aggregate(totles=Sum('i_count'))
     image_count = image_totle['totles']
-    node_container_top5 = nodes.order_by('-c_count')[:5]
-    ip_list = [ node.url.split(':')[0] for node in node_container_top5]
-    c_count_list = [ node.c_count for node in node_container_top5]
-    i_count_list = [ node.i_count for node in node_container_top5]
+    c_create_count = Log.objects.filter(type='CONTAINER').filter(state=True).filter(action='CREATE').count()
+    c_start_count = Log.objects.filter(type='CONTAINER').filter(state=True).filter(action='START').count()
+    c_stop_count = Log.objects.filter(type='CONTAINER').filter(state=True).filter(action='STOP').count()
+    c_restart_count = Log.objects.filter(type='CONTAINER').filter(state=True).filter(action='RESTART').count()
+    c_remove_count = Log.objects.filter(type='CONTAINER').filter(state=True).filter(action='REMOVE').count()
 
     context = {
         'nodes': nodes,
@@ -34,9 +34,11 @@ def index(request):
         'user_count': user_count,
         'container_count': container_count,
         'image_count': image_count,
-        'ip_list': ip_list,
-        'c_count_list': c_count_list,
-        'i_count_list': i_count_list,
+        'c_create_count': c_create_count,
+        'c_start_count': c_start_count,
+        'c_stop_count': c_stop_count,
+        'c_restart_count': c_restart_count,
+        'c_remove_count': c_remove_count,
         'c_running_count': c_running_count,
         'c_stopped_count': c_stopped_count,
         'c_paused_count': c_paused_count,
@@ -45,6 +47,8 @@ def index(request):
 
 
 def index_user(request):
+    if request.user.is_superuser:
+        return redirect('home:index')
     user = request.user.username
     nodes = HostNode.objects.filter(users__username=user)
     return render(request, 'home/index_user.html', {'nodes': nodes})
