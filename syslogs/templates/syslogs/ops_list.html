@@ -41,7 +41,9 @@
                             </tbody>
                         </table>
                         <div class="clearfix"></div>
-                        <button id="clear_btn" class="btn btn-sm btn-warning">清空日志</button>
+                        {% if request.user.is_superuser %}
+                            <button id="clear_btn" class="btn btn-sm btn-warning">清空日志</button>
+                        {% endif %}
                     </div>
                 </div>
             </div>

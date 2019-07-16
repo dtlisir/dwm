@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from hosts.models import HostNode
 from common.docker_api import get_containers, get_container_detail, get_images
@@ -9,7 +9,14 @@ from syslogs.models import Log
 
 
 def container_list(request, pk):
-    node = HostNode.objects.get(id=pk)
+    if request.user.is_superuser:
+        node = HostNode.objects.get(id=pk)
+    else:
+        user = request.user.username
+        check_node = HostNode.objects.filter(id=pk, users__username=user)
+        if not check_node:
+            return redirect('home:forbiden')
+        node = check_node[0]
     return render(request, 'containers/container_list.html', {'node': node})
 
 
@@ -34,8 +41,15 @@ def get_container_list(request):
 
 
 def container_create(request, pk):
+    if request.user.is_superuser:
+        node = HostNode.objects.get(id=pk)
+    else:
+        user = request.user.username
+        check_node = HostNode.objects.filter(id=pk, users__username=user)
+        if not check_node:
+            return redirect('home:forbiden')
+        node = check_node[0]
     images = []
-    node = HostNode.objects.get(id=pk)
     node_url = node.url
     resp = get_images(node_url)
     if resp['result']:
@@ -49,7 +63,6 @@ def post_container_create(request):
     resp = {}
     user = request.user.username
     try:
-
         node_url = request.POST.get('node_url')
         c_image = request.POST.get('image')
         kwargs = {}
@@ -63,7 +76,6 @@ def post_container_create(request):
             for port in port_list:
                 key = '%s/tcp' % (port.split(':')[0])
                 ports[key] = port.split(':')[1]
-            print(ports)
             kwargs['ports'] = ports
         c_volume = request.POST.get('volume', '')
         if c_volume:
@@ -74,17 +86,15 @@ def post_container_create(request):
                 value = {'mode': 'rw'}
                 value['bind']=volume.split(':')[1]
                 volumes[key] = value
-                print(volumes)
             kwargs['volumes'] = volumes
         resp = run_container(node_url, c_image, **kwargs)
         if resp['result']:
-            data = resp['data']
             Log.objects.create(
                 user=user,
                 type='CONTAINER',
                 action='CREATE',
                 state=True,
-                content='容器%s创建成功' % (data.name)
+                content='容器%s创建成功' % (resp['data'].name)
         )
         return JsonResponse({'result': True, 'message': '容器创建成功'})
     except Exception as e:
@@ -99,7 +109,14 @@ def post_container_create(request):
 
 
 def container_detail(request, pk, id):
-    node = HostNode.objects.get(id=pk)
+    if request.user.is_superuser:
+        node = HostNode.objects.get(id=pk)
+    else:
+        user = request.user.username
+        check_node = HostNode.objects.filter(id=pk, users__username=user)
+        if not check_node:
+            return redirect('home:forbiden')
+        node = check_node[0]
     node_name = node.name
     node_url = node.url
     data = {}

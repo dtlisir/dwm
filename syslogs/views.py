@@ -20,6 +20,8 @@ def get_ops_list(request):
 
 
 def get_log_clear(request):
+    if not request.user.is_superuser:
+        JsonResponse({'result': False, 'message': 'Permission denied'})
     try:
         Log.objects.all().delete()
         return JsonResponse({'result': True})

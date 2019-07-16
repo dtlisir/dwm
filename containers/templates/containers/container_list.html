@@ -56,7 +56,8 @@
                 columnDefs: [
                     {
                         targets: 1, createdCell: function (td, cellData, rowData) {
-                            var status_label = (cellData === 'running')? '<span class="label label-success">' + cellData + '</span>' :
+                            var status_label = (cellData === 'running' || cellData === 'created')?
+                                '<span class="label label-success">' + cellData + '</span>' :
                                 '<span class="label label-danger">' + cellData + '</span>';
                             $(td).html(status_label);
                         }
@@ -84,6 +85,7 @@
                     {data: "name"}, {data: "status"}, {data: "image"},
                     {data: "created"}, {data: "c_id"},
                 ],
+                order: [[ 3, 'desc' ]],
                 language: {
                     search: "搜索",
                     lengthMenu: "每页  _MENU_",

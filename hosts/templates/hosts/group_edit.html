@@ -89,7 +89,7 @@
                                 confirmButtonText: '确定',
                                 closeOnConfirm : false,
                             },function () {
-                                window.location = '{% url 'hosts:node_list' %}';
+                                window.location = '{% url 'hosts:group_list' %}';
                             });
                         } else {
                             _html = '<span style="color: #D9534F;font-weight: bold;">' + data.message + '</span>';

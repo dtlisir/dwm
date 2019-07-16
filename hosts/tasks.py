@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import time
-from django.utils import timezone
 from celery.schedules import crontab
 from celery.task import periodic_task
 from .models import HostNode
@@ -9,7 +8,7 @@ from syslogs.models import Log
 from common.docker_api import get_docker_info
 
 
-@periodic_task(run_every=crontab(minute='*/1', hour='*', day_of_week="*"))
+@periodic_task(run_every=crontab(minute='*/5', hour='*', day_of_week="*"))
 def check_node_data_periodic():
     try:
         nodes = HostNode.objects.all()

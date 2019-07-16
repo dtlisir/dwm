@@ -183,9 +183,10 @@ def node_detail(request, pk):
         node = HostNode.objects.get(id=pk)
     else:
         user = request.user.username
-        node = HostNode.objects.filter(id=pk, users__username=user)
-        if not node:
+        check_node = HostNode.objects.filter(id=pk, users__username=user)
+        if not check_node:
             return redirect('home:forbiden')
+        node = check_node[0]
     return render(request, 'hosts/node_detail.html', {'node': node})
 
 
