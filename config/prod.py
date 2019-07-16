@@ -22,7 +22,7 @@ DATABASES.update(
             'NAME': APP_CODE,  # 数据库名
             'USER': 'lisir',  # 数据库用户
             'PASSWORD': '800213',  # 数据库密码
-            'HOST': '127.0.0.1',  # 数据库主机
+            'HOST': '172.16.0.4',  # 数据库主机
             'PORT': '3306',  # 数据库端口
         },
     }
