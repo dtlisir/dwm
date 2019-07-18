@@ -29,7 +29,6 @@ def get_volume_list(request):
                     'driver': data.attrs['Driver'],
                     'mountpoint': data.attrs['Mountpoint'],
                     'created': data.attrs['CreatedAt'][:-6],
-                    'v_id': data.id,
                 }
                 resp_data.append(v_data)
         return JsonResponse({'data': resp_data})

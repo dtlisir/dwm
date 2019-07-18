@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from urllib.parse import urlencode
+
 from django.conf import settings
-from django.shortcuts import  redirect
 from django.contrib.auth import logout
 from django.contrib.auth.views import redirect_to_login
 from blueapps.account.decorators import login_exempt

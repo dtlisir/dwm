@@ -32,6 +32,7 @@
                                 <th>名称</th>
                                 <th>状态</th>
                                 <th>镜像</th>
+                                <th>端口</th>
                                 <th>创建时间</th>
                                 <th>动作</th>
                             </tr>
@@ -63,7 +64,13 @@
                         }
                     },
                     {
-                        targets: 4,
+                        targets: 3, createdCell: function (td, cellData) {
+                            var innerHtml = cellData.length > 25 ? cellData.substring(0, 25) + '...' : cellData;
+                            $(td).html('<a href="javascript:void(0);" data-toggle="tooltip" title="' + cellData + '">' + innerHtml + '</a>');
+                        }
+                    },
+                    {
+                        targets: 5,
                         orderable: false,
                         createdCell: function (td, cellData, rowData) {
                             var detail_btn = '<a href="{% url "containers:container_detail" pk=88888888 id=99999999 %}" class="btn btn-xs btn-info">详情</a>'
@@ -83,9 +90,9 @@
                 },
                 columns: [
                     {data: "name"}, {data: "status"}, {data: "image"},
-                    {data: "created"}, {data: "c_id"},
+                    {data: "ports"}, {data: "created"}, {data: "c_id"},
                 ],
-                order: [[ 3, 'desc' ]],
+                order: [[ 4, 'desc' ]],
                 language: {
                     search: "搜索",
                     lengthMenu: "每页  _MENU_",

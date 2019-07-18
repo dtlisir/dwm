@@ -19,11 +19,20 @@ def get_user_list(request):
     users = User.objects.all()
     data = []
     for user in users:
+        if user.is_superuser:
+            node_str = 'all'
+        else:
+            node_list = []
+            nodes = user.nodes.values('name')
+            if nodes:
+                node_list = [node['name'] for node in nodes]
+            node_str = ','.join(node_list)
         user_dict = {
             'name': user.username,
             'role': '管理员' if user.is_superuser else '普通用户',
             'nickname': user.nickname,
             'last_login': user.last_login.strftime("%Y-%m-%d %H:%M:%S"),
+            'nodes': node_str,
             'date_joined': user.date_joined.strftime("%Y-%m-%d %H:%M:%S"),
         }
         data.append(user_dict)
@@ -46,7 +55,6 @@ def get_node_users(request):
         node = HostNode.objects.get(id=node_id)
         id_list = node.users.values('id')
         user_id_list = [ data['id'] for data in id_list]
-        print(user_id_list)
         return JsonResponse({'data': user_id_list})
     except Exception as e:
         return JsonResponse({'data': []})

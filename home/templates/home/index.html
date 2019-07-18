@@ -41,14 +41,14 @@
                 <div class="col-md-6 col-sm-6 col-xs-12">
                     <div class="x_panel">
                         <div class="x_content">
-                            <div id="ops_echart" style="height:320px;"></div>
+                            <div id="ops_echart" style="height:350px;"></div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-12">
                     <div class="x_panel">
                         <div class="x_content">
-                            <div id="rsp_echart" style="height:320px;"></div>
+                            <div id="rsp_echart" style="height:350px;"></div>
                         </div>
                     </div>
                 </div>
@@ -338,7 +338,7 @@
             legend: {
                 x: 'center',
                 y: 'bottom',
-                data: ['创建数', '启动数', '停止数', '重启数', '删除数']
+                data: ['创建', '启动', '停止', '重启', '删除']
             },
             toolbox: {
                 show: false,
@@ -369,19 +369,19 @@
                 sort: 'ascending',
                 data: [{
                     value: {{ c_create_count }},
-                    name: '创建数'
+                    name: '创建'
                 }, {
                     value: {{ c_start_count }},
-                    name: '启动数'
+                    name: '启动'
                 }, {
                     value: {{ c_stop_count }},
-                    name: '停止数'
+                    name: '停止'
                 }, {
                     value: {{ c_restart_count }},
-                    name: '重启数'
+                    name: '重启'
                 }, {
                     value: {{ c_remove_count }},
-                    name: '删除数'
+                    name: '删除'
                 }]
             }]
         });

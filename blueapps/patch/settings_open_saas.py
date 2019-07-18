@@ -1,4 +1,5 @@
 # coding=utf-8
+
 import os
 from blueapps.patch.log import get_paas_v2_logging_config_dict
 from config.default import *  # noqa

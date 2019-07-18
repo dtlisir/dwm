@@ -32,6 +32,7 @@
                                 <th>名称</th>
                                 <th>角色</th>
                                 <th>昵称</th>
+                                <th>授权节点</th>
                                 <th>最后登录</th>
                                 <th>首次登录</th>
                             </tr>
@@ -52,9 +53,9 @@
             var table = $('#user_list_table').DataTable({
                 columnDefs: [
                     {
-                        targets: 3, createdCell: function (td, cellData, rowData) {
-                            var last_login = '<span style="color: #46b8da;">' + cellData + '</span>';
-                            $(td).html(last_login);
+                        targets: 3, createdCell: function (td, cellData) {
+                            var innerHtml = cellData.length > 25 ? cellData.substring(0, 25) + '...' : cellData;
+                            $(td).html('<a href="javascript:void(0);" data-toggle="tooltip" title="' + cellData + '">' + innerHtml + '</a>');
                         }
                     }
                 ],
@@ -63,7 +64,7 @@
                 },
                 columns: [
                     {data: "name"}, {data: "role"}, {data: "nickname"},
-                    {data: "last_login"}, {data: "date_joined"}
+                    {data: "nodes"}, {data: "last_login"}, {data: "date_joined"}
                 ],
                 language: {
                     search: "搜索",

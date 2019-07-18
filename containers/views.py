@@ -28,12 +28,22 @@ def get_container_list(request):
         resp = get_containers(url)
         if resp['result']:
             for data in resp['data']:
+                ports_list = []
+                ports = data.ports
+                if ports:
+                    for key,value in ports.items():
+                        if value:
+                            port_str = '%s:%s->%s' % (value[0]['HostIp'], value[0]['HostPort'], key)
+                        else:
+                            port_str = key
+                        ports_list.append(port_str)
                 c_data = {
                     'c_id': data.id,
                     'name': data.name,
-                    'image': data.image.attrs['RepoTags'][0] if data.image.attrs['RepoTags'] else '',
+                    'image': data.image.tags[0] if data.image.tags else '',
                     'created': handle_time(data.attrs['Created'][:-11]),
                     'status': data.status,
+                    'ports': ','.join(ports_list)
                 }
                 resp_data.append(c_data)
         return JsonResponse({'data': resp_data})

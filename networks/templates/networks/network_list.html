@@ -33,7 +33,6 @@
                                 <th>范围</th>
                                 <th>驱动</th>
                                 <th>子网</th>
-                                <th>网关</th>
                                 <th>创建时间</th>
                             </tr>
                             </thead>
@@ -53,7 +52,7 @@
             var table = $('#network_list_table').DataTable({
                 columnDefs: [
                     {
-                        targets: 2, createdCell: function (td, cellData, rowData) {
+                        targets: 3, createdCell: function (td, cellData, rowData) {
                             var status_btn = '<span class="label label-info">' + cellData + '</span>';
                             $(td).html(status_btn);
                         }
@@ -68,8 +67,9 @@
                 },
                 columns: [
                     {data: "short_id"}, {data: "scope"}, {data: "driver"},
-                    {data: "subnet"}, {data: "gateway"}, {data: "created"}
+                    {data: "subnet"}, {data: "created"}
                 ],
+                order: [[ 3, 'desc' ]],
                 language: {
                     search: "搜索",
                     lengthMenu: "每页  _MENU_",

@@ -25,12 +25,14 @@ def get_network_list(request):
         resp = get_networks(url)
         if resp['result']:
             for data in resp['data']:
+                subnet = ''
+                if data.attrs['IPAM']['Config']:
+                    subnet = data.attrs['IPAM']['Config'][0]['Subnet']
                 v_data = {
                     'short_id': data.short_id,
                     'scope': data.attrs['Scope'],
                     'driver': data.attrs['Driver'],
-                    'subnet': data.attrs['IPAM']['Config'][0]['Subnet'] if data.attrs['IPAM']['Config'] else '',
-                    'gateway': data.attrs['IPAM']['Config'][0]['Gateway'] if data.attrs['IPAM']['Config'] else '',
+                    'subnet': subnet,
                     'created': data.attrs['Created'][:-16],
                 }
                 resp_data.append(v_data)
